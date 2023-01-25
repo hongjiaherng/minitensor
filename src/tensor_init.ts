@@ -1,18 +1,16 @@
 import { isTypedArray } from "util/types";
 import { Tensor } from "./tensor";
-import { ArrayLike, DataType, TypedArray } from "./types";
-import { inferShape, inferDType, castToDType } from "./utils";
+import { DataType, TensorLike, TypedArray } from "./types";
+import { inferShape, inferDType, castArrayToDType } from "./utils";
 
 export function tensor(
-	data: ArrayLike,
+	data: TensorLike,
 	shape?: number[],
 	dtype?: DataType
-): Tensor {
-	// verify data
-	if (!isTypedArray(data) && !Array.isArray(data)) {
-		throw new Error(
-			"Data must be either a TypedArray or an Array of numbers or booleans"
-		);
+): Tensor<DataType> {
+	// cast data to array if not already
+	if (typeof data === "number" || typeof data === "boolean") {
+		data = [data] as number[] | boolean[];
 	}
 
 	// verify shape
@@ -29,7 +27,29 @@ export function tensor(
 	}
 
 	if (dtype == null) dtype = inferDType(data); // infer dtype if null
-	data = castToDType(data, dtype); // cast data to dtype
+	data = castArrayToDType(data, dtype); // cast data to dtype
 
+	return new Tensor(data, shape, dtype);
+}
+
+export function empty(
+	shape: number[],
+	dtype: DataType = "float32"
+): Tensor<DataType> {
+	const size = shape.reduce((a, b) => a * b, 1);
+	let data: TypedArray;
+	switch (dtype) {
+		case "float32":
+			data = new Float32Array(size);
+			break;
+		case "int32":
+			data = new Int32Array(size);
+			break;
+		case "bool":
+			data = new Uint8Array(size);
+			break;
+		default:
+			throw new Error(`Unknown dtype: ${dtype}`);
+	}
 	return new Tensor(data, shape, dtype);
 }

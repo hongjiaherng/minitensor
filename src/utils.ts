@@ -1,4 +1,5 @@
-import { DataType, ArrayLike, TypedArray } from "./types";
+import { isTypedArray } from "util/types";
+import { DataType, TypedArray, TensorLike } from "./types";
 
 export function computeStrides(shape: number[]): number[] {
 	const strides = new Array(shape.length);
@@ -10,31 +11,42 @@ export function computeStrides(shape: number[]): number[] {
 	return strides;
 }
 
-export function inferShape(data: ArrayLike): number[] {
+export function inferShape(data: TensorLike): number[] {
+	if (typeof data === "number" || typeof data === "boolean") return [1];
 	return [data.length];
 }
 
-export function inferDType(data: ArrayLike): DataType {
+export function inferDType(data: TensorLike): DataType {
 	if (data instanceof Float32Array) return "float32";
 	else if (data instanceof Int32Array || data instanceof Uint8Array)
 		return "int32";
-	else if (typeof data[0] === "number") return "float32";
-	else if (typeof data[0] === "boolean") return "bool";
+	else if (data instanceof Array && typeof data[0] === "number")
+		return "float32";
+	else if (data instanceof Array && typeof data[0] === "boolean") return "bool";
+	else if (typeof data === "number") return "float32";
+	else if (typeof data === "boolean") return "bool";
 	return "float32";
 }
 
-export function castToDType(data: ArrayLike, dtype: DataType): TypedArray {
+export function castArrayToDType(
+	data: number[] | boolean[] | TypedArray,
+	dtype: DataType
+): TypedArray {
 	let newData: TypedArray;
 	switch (dtype) {
 		case "float32":
-			if (Array.isArray(data) && typeof data[0] !== "number") {
+			if (isTypedArray(data) && data instanceof Float32Array) {
+				return data;
+			} else if (Array.isArray(data) && typeof data[0] !== "number") {
 				throw new Error("Data doesn't match the type of the given dtype");
 			}
 			newData = Float32Array.from(data as number[] | TypedArray);
 			break;
 
 		case "int32":
-			if (Array.isArray(data) && typeof data[0] !== "number") {
+			if (isTypedArray(data) && data instanceof Int32Array) {
+				return data;
+			} else if (Array.isArray(data) && typeof data[0] !== "number") {
 				throw new Error("Data doesn't match the type of the given dtype");
 			}
 			newData = Int32Array.from(data as number[] | TypedArray);
@@ -63,4 +75,20 @@ export function castToDType(data: ArrayLike, dtype: DataType): TypedArray {
 			throw Error("Invalid dtype");
 	}
 	return newData;
+}
+
+export function isEqualShape(shapeA: number[], shapeB: number[]): boolean {
+	if (shapeA.length !== shapeB.length) return false;
+	for (let i = 0; i < shapeA.length; i++) {
+		if (shapeA[i] !== shapeB[i]) return false;
+	}
+	return true;
+}
+
+export function determineDType(...dtypes: DataType[]): DataType {
+	if (dtypes.length === 1) return dtypes[0];
+	else if (dtypes.some((dtype) => dtype === "float32")) return "float32";
+	else if (dtypes.some((dtype) => dtype === "int32")) return "int32";
+	else return "bool";
+	
 }
