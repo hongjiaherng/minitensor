@@ -1,7 +1,6 @@
 import { Tensor } from "../tensor";
-import { tensor } from "../tensor_init";
-import { DataType, SingleValueMap } from "../types";
-import { computeStrides } from "../utils";
+import { DataType, DataTypeMap, SingleValueMap } from "../types";
+import { computeStrides, isEqualShape } from "../utils";
 
 export function broadcastTo(x: Tensor<DataType>, shape: number[]) {
 	if (
@@ -11,7 +10,7 @@ export function broadcastTo(x: Tensor<DataType>, shape: number[]) {
 		// if tensor is already the same shape as shape, return tensor
 		return x;
 	}
-	const newX = tensor(x.data, x.shape, x.dtype);
+	const newX = new Tensor(x.data, x.shape, x.dtype);
 	newX.shape = shape;
 	newX.size = shape.reduce((a, b) => a * b, 1);
 	newX.strides = computeBroadcastedStrides(x.shape, x.strides, shape);
@@ -82,27 +81,51 @@ export function broadcastTensors(
 	return [broadcastedTensorA, broadcastedTensorB];
 }
 
-// export class BroadcastedTensorsIterator<D extends DataType>
-// 	implements Iterator<D>
-// {
-// 	private tensorA: Tensor<D>;
-// 	private tensorB: Tensor<D>;
-// 	private done: boolean;
+export class TensorsIterator<D extends DataType>
+	implements Iterator<SingleValueMap[D][]>
+{
+	private tensors: Tensor<D>[];
+	private done: boolean;
+	private index: number;
 
-// 	constructor(tensorA: Tensor<D>, tensorB: Tensor<D>) {
-// 		this.tensorA = tensorA;
-// 		this.tensorB = tensorB;
-// 		this.done = false;
-// 	}
+	constructor(...tensors: Tensor<D>[]) {
+		if (tensors.length === 0) {
+			throw new Error("No tensors provided");
+		}
+		if (
+			tensors.some(
+				(t) =>
+					t.size !== tensors[0].size || !isEqualShape(t.shape, tensors[0].shape)
+			)
+		) {
+			throw new Error("All tensors must have the same shape");
+		}
+		this.tensors = tensors;
+		this.done = false;
+		this.index = 0;
+	}
 
-// 	public next(): IteratorResult<D, number[] | undefined> {
-// 		if (this.done) {
-// 			return { done: this.done, value: undefined };
-// 		}
+	next(): IteratorResult<SingleValueMap[D][]> {
+		if (this.done) {
+			return { done: this.done, value: undefined };
+		}
+		if (this.index === this.tensors[0].size) {
+			// all tensros have the same size / shape, checking tensors[0] is enough
+			this.done = true;
+			return { done: this.done, value: undefined };
+		}
 
-// 	}
+		const values = this.tensors.map(
+			(t) => t.data[t._locToOffset(t._indexToLoc(this.index))]
+		);
+		this.index += 1;
+		return {
+			done: false,
+			value: values as SingleValueMap[D][],
+		};
+	}
 
-// 	public [Symbol.iterator](): BroadcastedTensorsIterator<D> {
-// 		return this;
-// 	}
-// }
+	[Symbol.iterator](): TensorsIterator<D> {
+		return this;
+	}
+}

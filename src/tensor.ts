@@ -1,4 +1,4 @@
-import { add } from "./ops";
+import { add, reshape } from "./ops";
 import {
 	DataType,
 	DataTypeMap,
@@ -25,8 +25,8 @@ export class Tensor<D extends DataType> {
 		this.strides = computeStrides(shape);
 	}
 
-	get(...indices: number[]): SingleValueMap[D] {
-		const offset = this._indicesToOffset(indices);
+	get(...loc: number[]): SingleValueMap[D] {
+		const offset = this._locToOffset(loc);
 		return this.data[offset] as SingleValueMap[D];
 	}
 
@@ -52,20 +52,33 @@ export class Tensor<D extends DataType> {
 		return _recursiveArray([...this.shape], 0);
 	}
 
-	add(other: Tensor<D> | TensorLike): Tensor<D> {
-		return add(this, other) as Tensor<D>;
+	reshape(shape: number[]): Tensor<D> {
+		return reshape(this, shape);
 	}
 
-	_indicesToOffset(indices: number[]): number {
-		if (indices.length !== this.shape.length) {
+	add(other: Tensor<D> | TensorLike): Tensor<D> {
+		return add(this, other);
+	}
+
+	_locToOffset(loc: number[]): number {
+		if (loc.length !== this.shape.length) {
 			throw new Error(
-				`Tensor shape [${this.shape}] does not match indices length ${indices.length}`
+				`Tensor shape [${this.shape}] does not match loc length ${loc.length}`
 			);
 		}
 		let offset = 0;
-		for (let i = 0; i < indices.length; i++) {
-			offset += indices[i] * this.strides[i];
+		for (let i = 0; i < loc.length; i++) {
+			offset += loc[i] * this.strides[i];
 		}
 		return offset;
+	}
+
+	_indexToLoc(index: number): number[] {
+		const loc = new Array(this.shape.length);
+		for (let i = this.shape.length - 1; i >= 0; i--) {
+			loc[i] = index % this.shape[i];
+			index = Math.floor(index / this.shape[i]);
+		}
+		return loc;
 	}
 }

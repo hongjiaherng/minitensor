@@ -1,42 +1,73 @@
-import { broadcastShapes, broadcastTensors, broadcastTo, computeBroadcastedStrides } from "./ops/broadcast";
-import { tensor } from "./tensor_init";
+import {
+	broadcastShapes,
+	broadcastTensors,
+	broadcastTo,
+	computeBroadcastedStrides,
+	TensorsIterator,
+} from "./ops/broadcast";
+import { arange, tensor } from "./tensor_init";
 import { Tensor } from "./tensor";
 import { DataType } from "./types";
 import { determineDType } from "./utils";
+import { add } from "./ops";
 
-const a = tensor([1.123, 2.123, 3.123, 4.211, 5.12134, 6.124], [2, 3], "float32");
-const b = tensor([10, 20, 30], [3], "int32");
-const c = broadcastTo(b, [4, 3]);
+let a, b, c, scalar;
 
-console.log(a);
-console.log(a.view());
-console.log(b);
-console.log(b.view());
-console.log(c)
-console.log(c.view())
+a = arange(0, 9).reshape([3, 3]);
+b = arange(0, 3).reshape([3]);
+c = a.add(b);
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
 
-// const iterate = (tensor: Tensor<DataType>) => {
-//   for (let i = 0; i < tensor.shape[0]; i++) {
-//     for (let j = 0; j < tensor.shape[1]; j++) {
-//       for (let k = 0; k < tensor.shape[2]; k++) {
-//         console.log(i, j, k, i * tensor.strides[0] + j * tensor.strides[1] + k * tensor.strides[2])
-//       }
-//     }
-//     console.log()
-//   }
-// }
+a = arange(0, 3);
+scalar = 2.0;
+c = a.add(scalar);
+console.log(`[${a.shape}] + [1] = [${c.shape}]`);
 
-// iterate(c);
+a = arange(0, 5 * 4).reshape([5, 4]);
+b = tensor([1])
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
 
-// let index = 0;
-// let offset = 0
-// while (index < c.size) {
-//   offset = offset + 
-//   // 0, 1, 2, 0, 1, 2
+a = arange(0, 5 * 4).reshape([5, 4]);
+b = arange(0, 4);
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
 
-//   console.log(c.data[offset]);
+a = arange(0, 15 * 3 * 5).reshape([15, 3, 5]);
+b = arange(0, 15 * 1 * 5).reshape([15, 1, 5]);
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
 
-//   index++;
-// }
+a = arange(0, 15 * 3 * 5).reshape([15, 3, 5]);
+b = arange(0, 3 * 5).reshape([3, 5]);
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
 
-// console.log(c);
+a = arange(0, 15 * 3 * 5).reshape([15, 3, 5]);
+b = arange(0, 3).reshape([3, 1])
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
+
+try {
+  a = arange(0, 3)
+  b = arange(0, 4)
+  c = a.add(b)
+  console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);  
+} catch (error) {
+  console.log((error as Error).message)
+}
+
+
+try {
+  a = arange(0, 2 * 1).reshape([2, 1])
+  b = arange(0, 8 * 4 * 3).reshape([8, 4, 3])
+  c = a.add(b)
+  console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);  
+} catch (error) {
+  console.log((error as Error).message)
+}
+
+a = arange(0, 10 * 3).reshape([10, 3])
+b = arange(0, 5 * 1 * 3).reshape([5, 1, 3])
+c = a.add(b)
+console.log(`[${a.shape}] + [${b.shape}] = [${c.shape}]`);
