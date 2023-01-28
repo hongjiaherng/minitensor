@@ -11,7 +11,11 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@types/node": "^18.11.18",
+		"@types/seedrandom": "^3.0.4",
 		"ts-node": "^10.9.1",
 		"typescript": "^4.9.4"
+	},
+	"dependencies": {
+		"seedrandom": "^3.0.5"
 	}
 }

@@ -4,7 +4,7 @@ import { convertToTensor, determineDType } from "../utils";
 import { ensureShapesMatch } from "./broadcast";
 import { empty } from "./tensor_init";
 
-export function add<D extends DType>(
+export function mul<D extends DType>(
 	a: Tensor<D> | TensorLike,
 	b: Tensor<D> | TensorLike
 ): Tensor<D> {
@@ -21,7 +21,8 @@ export function add<D extends DType>(
 	) as Tensor<D>;
 
 	for (let i = 0; i < result.size(); i++) {
-		result.data.setByIndex(a_.data.getByIndex(i) + b_.data.getByIndex(i), i);
+		// console.log(a_.data.getByIndex(i), b_.data.getByIndex(i));
+		result.data.setByIndex(a_.data.getByIndex(i) * b_.data.getByIndex(i), i);
 	}
 
 	return result;

@@ -1,3 +1,13 @@
+# Plan
+
+- implement ndarray (the current tensor) 
+  - that supports basic operations (binaryOps, unaryOps, movementOps, reduceOps, conv)
+  - that supports array broadcasting for binaryOps
+  - reference to numjs for the structure and method to implement
+- implement tensor
+  - that utilizes ndarray internally
+  - that supports autodiff
+
 # How array broadcasting works
 
 - given 2 vars, A & B

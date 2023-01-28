@@ -1,4 +1,4 @@
-import { tensor } from "./tensor_init";
+import { tensor } from "../temp/tensor_init";
 
 // init with:
 // Uint8Array -> Float32Array
