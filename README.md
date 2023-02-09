@@ -17,95 +17,13 @@
 - compute the op
 
 
+# Type Casting
 
-## Example
+# Ops
 
-- shape: 
-```
-(3, 4)
-```
-- data: 
-```
-[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-```
-- expected:
-``` 
-[[1, 2, 3, 4], 
- [5, 6, 7, 8], 
- [9, 10, 11, 12]]
-```
-
-## Example
-
-- shape:
-```
-(2, 3, 4)
-```
-- data:
-```
-[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
-```
-- expected:
-```
-[[[1, 2, 3, 4], 
-  [5, 6, 7, 8], 
-  [9, 10, 11, 12]], 
- [[13, 14, 15, 16], 
-  [17, 18, 19, 20], 
-  [21, 22, 23, 24]]]
-```
-
-## Example
-- shape:
-```
-(2, 3, 4, 5)
-```
-- data:
-```
-[1, 2, 3, 4, 5, 6, ..., 120]
-```
-- expected
-```
-[
-  [
-    [
-      [1, 2, 3, 4, 5], 
-      [6, 7, 8, 9, 10], 
-      [11, 12, 13, 14, 15], 
-      [16, 17, 18, 19, 20]
-    ], 
-    [
-      [21, 22, 23, 24, 25], 
-      [26, 27, 28, 29, 30], 
-      [31, 32, 33, 34, 35], 
-      [36, 37, 38, 39, 40]
-    ], 
-    [
-      [41, 42, 43, 44, 45], 
-      [46, 47, 48, 49, 50], 
-      [51, 52, 53, 54, 55], 
-      [56, 57, 58, 59, 60]
-    ]
-  ], 
-  [
-    [
-      [61, 62, 63, 64, 65], 
-      [66, 67, 68, 69, 70], 
-      [71, 72, 73, 74, 75], 
-      [76, 77, 78, 79, 80]
-    ], 
-    [
-      [81, 82, 83, 84, 85], 
-      [86, 87, 88, 89, 90], 
-      [91, 92, 93, 94, 95], 
-      [96, 97, 98, 99, 100]
-    ], 
-    [
-      [101, 102, 103, 104, 105], 
-      [106, 107, 108, 109, 110], 
-      [111, 112, 113, 114, 115], 
-      [116, 117, 118, 119, 120]
-    ]
-  ]
-]
-```
+- viewOps: reshape, transpose, slice, concat, split
+- unaryOps: abs, neg, ceil, floor, round, sqrt, exp, log, sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, asinh, acosh, atanh, sigmoid, tanh, relu, leakyRelu, elu, selu, softplus, softsign, logSoftmax, softmax, logSigmoid, logSoftmax, logSoftplus, logSoftsign, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10, log1p, expm1, erf, erfc, sign, square, cube, reciprocal, rsqrt, square, cube, reciprocal, rsqrt, rcp, rsquare, rcube, exp2, log2, log10,
+- elementWiseBinaryOps: add, sub, mul, div, pow
+- nonElementWiseBinaryOps: dot, cross, outer, matmul, conv
+- reduceOps: sum, prod, mean, min, max, argmin, argmax, std, var, norm, logSumExp, logSum, logProd, logMean, logStd, logVar, logNorm, log1pSum, log1pProd, log1pMean, log1pStd, log1pVar, log1pNorm, expm1Sum, expm1Prod, expm1Mean, expm1Std, expm1Var, expm1Norm, erfSum, erfProd, erfMean, erfStd, erfVar, erfNorm, erfcSum, erfcProd, erfcMean, erfcStd, erfcVar, erfcNorm, signSum, signProd, signMean, signStd, signVar, signNorm, squareSum, squareProd, squareMean, squareStd, squareVar, squareNorm, cubeSum, cubeProd, cubeMean, cubeStd, cubeVar, cubeNorm, reciprocalSum, reciprocalProd, reciprocalMean, reciprocalStd, reciprocalVar, reciprocalNorm, rsqrtSum, rsqrtProd, rsqrtMean, rsqrtStd, rsqrtVar, rsqrtNorm, rcpSum, rcpProd, rcpMean, rcpStd, rcpVar, rcpNorm, rsquareSum, rsquareProd, rsquareMean, rsquareStd, rsquareVar, rsquareNorm, rcubeSum, rcubeProd, rcubeMean, rcubeStd, rcubeVar, rcubeNorm, exp2Sum, exp2Prod, exp2Mean, exp2Std, exp2Var, exp2Norm, log2Sum, log2Prod, log2Mean, log2Std, log2Var, log2Norm, log10Sum, log10Prod, log10Mean, log10Std, log10Var, log10Norm, log1pSum, log1pProd, log1pMean, log1pStd, log1pVar, log1pNorm, expm1Sum, expm1Prod, expm1Mean, expm1Std, expm1Var, expm1Norm, erfSum, erfProd, erfMean, erfStd, erfVar, erfNorm, erfcSum, erfcProd, erfcMean, erfcStd, erfcVar, erfcNorm, signSum, signProd, signMean, signStd,
+- createOps: zeros, ones, eye, rand, randn, range, linspace, logspace, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack, columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat, triu, tril, tri, vander, hstack, vstack
