@@ -2,7 +2,9 @@ import { Tensor } from "../../tensor";
 import { DType, RecursiveArray, TensorLike, upcastType } from "../../types";
 import { broadcastTensors } from "../broadcast/broadcast_tensors";
 import { TensorsIterator } from "../broadcast/tensors_iterator";
+import { fromTensorLike } from "../creation";
 import { tensor } from "../creation/tensor";
+import { reshape } from "../view/reshape";
 
 export function add<D extends DType>(
 	input: Tensor<D> | TensorLike | RecursiveArray,
@@ -18,19 +20,24 @@ export function add<D extends DType>(
 
 	[input_, other_] = broadcastTensors(input_, other_);
 
-  const targetArray = [];
-	const targetDtype = upcastType(input_.dtype, other_.dtype);
-	
-  // TODO: settle boolean dtype
-  // a = torch.tensor([True, False, True])
-  // b = torch.tensor([False, False, True])
-  // a + b
-  // tensor([ True, False,  True])
+	const targetArray = [];
+	const targetDType = upcastType(input_.dtype, other_.dtype);
 
-  for (const [inputVal, otherVal] of new TensorsIterator(input_, other_)) {
-    targetArray.push(inputVal + otherVal);
-  }
+	const tensorsIterator = new TensorsIterator(input_, other_);
 
-  return input_ as Tensor<D>;
+	if (targetDType === "bool") {
+		for (const [inputVal, otherVal] of tensorsIterator) {
+			targetArray.push((inputVal as boolean) || (otherVal as boolean));
+		}
+	} else {
+		for (const [inputVal, otherVal] of tensorsIterator) {
+			targetArray.push(Number(inputVal) + Number(otherVal));
+		}
+	}
 
+	return fromTensorLike(
+		targetArray as TensorLike,
+		targetDType,
+		input_.shape
+	) as Tensor<D>;
 }

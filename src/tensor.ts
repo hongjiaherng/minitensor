@@ -1,20 +1,27 @@
 import { Storage } from "./storage";
 import { DType, PrimTypeMap, RecursiveArray, TensorLike } from "./types";
-import {
-	isBroadcasted,
-} from "./utils";
+import { isBroadcasted } from "./utils";
+
+/**
+ * Tensors are immutable
+ *
+ * Definition of "Tensors are immutable":
+ * - shape, strides, offset, dtype, size cannot be mutated
+ * - data can be mutated, but only by mutating the underlying storage's storage (not assigning a new storage reference)
+ *
+ */
 
 export class Tensor<D extends DType> {
 	public readonly shape: number[];
 	public readonly strides: number[];
 	public readonly offset: number;
-	public readonly storage: Storage<D>;
+	public readonly data: Storage<D>;
 	public readonly dtype: D;
 	public readonly size: number;
 	public getByIndex: (index: number) => PrimTypeMap[D];
 
 	constructor(
-		storage: Storage<D>,
+		data: Storage<D>,
 		shape: number[],
 		strides: number[],
 		offset: number
@@ -23,17 +30,18 @@ export class Tensor<D extends DType> {
 		this.shape = shape;
 		this.strides = strides;
 		this.offset = offset;
-		this.storage = storage;
-		this.dtype = this.storage.dtype;
+		this.data = data;
+		this.dtype = this.data.dtype;
 		this.size = this.shape.reduce((a, b) => a * b, 1);
+
 		this.getByIndex = createGetByIndexMethod(this);
 	}
 
-	public data(): RecursiveArray {
+	public array(): RecursiveArray {
 		const _recursiveArray = (shape: number[], offset: number) => {
 			if (shape.length === 1) {
 				let slicedArray: number[] | boolean[] = Array.from(
-					this.storage.storage.slice(offset, offset + shape[0])
+					this.data.storage.slice(offset, offset + shape[0])
 				);
 				if (this.dtype === "bool") {
 					slicedArray = slicedArray.map((v) => !!v);
@@ -64,23 +72,23 @@ export class Tensor<D extends DType> {
 	}
 }
 
+// factory method to create a getByIndexMethod based on strides and dtype
 function createGetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
 	let getByIndex: (index: number) => PrimTypeMap[D];
 	if (isBroadcasted(tensor)) {
 		if (tensor.dtype === "bool") {
 			getByIndex = (index: number) =>
-				!!tensor.storage.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
+				!!tensor.data.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
 		} else {
 			getByIndex = (index: number) =>
-				tensor.storage.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
+				tensor.data.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
 		}
 	} else {
 		if (tensor.dtype === "bool") {
 			getByIndex = (index: number) =>
-				!!tensor.storage.get(index) as PrimTypeMap[D];
+				!!tensor.data.get(index) as PrimTypeMap[D];
 		} else {
-			getByIndex = (index: number) =>
-				tensor.storage.get(index) as PrimTypeMap[D];
+			getByIndex = (index: number) => tensor.data.get(index) as PrimTypeMap[D];
 		}
 	}
 	return getByIndex;

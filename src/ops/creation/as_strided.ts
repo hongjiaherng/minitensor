@@ -8,5 +8,5 @@ export function asStrided<D extends DType>(
 	offset: number = 0
 ): Tensor<D> {
 	// create new tensor with same storage, modify shape, strides, and offset (no change)
-	return new Tensor(x.storage, shape, strides, offset);
+	return new Tensor(x.data, shape, strides, offset);
 }

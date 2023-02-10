@@ -1,6 +1,11 @@
 import { DType, PrimTypeMap, TensorLike, TypedArrayMap } from "./types";
 import { inferDTypeFromTensorLikeObj, castToTypedArray } from "./types";
 
+// Definition of "Storages are immutable":
+// - size, dtype cannot be mutated
+// - storage can be mutated in-place, but only by mutating the underlying TypedArray (not assigning a new TypedArray reference)
+
+
 export class Storage<D extends DType> {
   size: number;
   dtype: D;

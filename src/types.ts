@@ -71,8 +71,8 @@ const upcastTypeMap = {
 	bool: UpcastBoolAndMap,
 };
 
-export function upcastType(inputType: DType, otherType: DType): DType {
-	return upcastTypeMap[inputType][otherType];
+export function upcastType<D extends DType>(inputType: D, otherType: D): D {
+	return upcastTypeMap[inputType][otherType] as D;
 }
 
 export function inferDTypeFromTensorLikeObj(tensorLikeObj: TensorLike): DType {
