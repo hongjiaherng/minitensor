@@ -2,6 +2,11 @@ import * as minitensor from ".";
 
 const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4, 3]);
 
+// TODO: unit test for slice
+// TODO: cover -ve step slicing
+// TODO: option to flatten the sliced tensor into 1D
+
+
 // // Single element indexing
 // // Slicing
 
