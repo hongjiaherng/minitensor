@@ -37,7 +37,7 @@ export function add<D extends DType>(
 
 	return fromTensorLike(
 		targetArray as TensorLike,
-		targetDType,
-		input_.shape
+		input_.shape,
+		targetDType
 	) as Tensor<D>;
 }

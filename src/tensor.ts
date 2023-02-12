@@ -40,15 +40,16 @@ export class Tensor<D extends DType> {
 	public array(): RecursiveArray {
 		const _recursiveArray = (shape: number[], offset: number) => {
 			if (shape.length === 1) {
-				let slicedArray: number[] | boolean[] = Array.from(
-					this.data.storage.slice(offset, offset + shape[0])
+				const stride = this.strides[this.strides.length - 1]; // stride of innermost dimension
+				const slicedArray = Array.from(
+					{ length: shape[0] },
+					(_, i) => this.data.storage[offset + i * stride]
 				);
-				if (this.dtype === "bool") {
-					slicedArray = slicedArray.map((v) => !!v);
-				}
-				return slicedArray;
+				return this.dtype === "bool"
+					? slicedArray.map((v) => !!v)
+					: slicedArray;
 			}
-			let size = shape.shift() ?? 0;
+			let size = shape.shift()!;
 			let array = new Array(size);
 			for (let i = 0; i < size; i++) {
 				array[i] = _recursiveArray(
@@ -59,7 +60,7 @@ export class Tensor<D extends DType> {
 			return array;
 		};
 
-		return _recursiveArray([...this.shape], 0);
+		return _recursiveArray([...this.shape], this.offset);
 	}
 
 	_indexToOffset(index: number): number {

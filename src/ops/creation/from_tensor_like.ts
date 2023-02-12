@@ -5,8 +5,8 @@ import { computeStrides, flattenArray, inferShape } from "../../utils";
 
 export function fromTensorLike<D extends DType>(
 	data: TensorLike,
-	dtype?: D,
-	shape: number[] = inferShape(data)
+	shape: number[] = inferShape(data),
+	dtype?: D
 ): Tensor<D> {
 	const strides = computeStrides(shape);
 	const offset = 0;
