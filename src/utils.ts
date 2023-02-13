@@ -2,77 +2,77 @@ import assert from "assert";
 import { isTypedArray } from "util/types";
 import { Tensor } from "./tensor";
 import {
-	DType,
-	inferDTypeFromTypedArray,
-	RecursiveArray,
-	TensorLike,
-	TypedArray,
-	TypedArrayMap,
+  DType,
+  inferDTypeFromTypedArray,
+  RecursiveArray,
+  TensorLike,
+  TypedArray,
+  TypedArrayMap
 } from "./types";
 
 export function createEmptyTypedArray<D extends DType>(size: number, dtype: D) {
-	switch (dtype) {
-		case "float32":
-			return new Float32Array(size);
-		case "float64":
-			return new Float64Array(size);
-		case "int16":
-			return new Int16Array(size);
-		case "int32":
-			return new Int32Array(size);
-		case "bool":
-			return new Uint8Array(size);
-		default:
-			throw new Error("Unsupported dtype");
-	}
+  switch (dtype) {
+    case "float32":
+      return new Float32Array(size);
+    case "float64":
+      return new Float64Array(size);
+    case "int16":
+      return new Int16Array(size);
+    case "int32":
+      return new Int32Array(size);
+    case "bool":
+      return new Uint8Array(size);
+    default:
+      throw new Error("Unsupported dtype");
+  }
 }
 
 export function computeStrides(shape: number[]): number[] {
-	const strides = new Array(shape.length);
-	let stride = 1;
-	for (let i = shape.length - 1; i >= 0; i--) {
-		strides[i] = stride;
-		stride *= shape[i];
-	}
-	return strides;
+  const strides = new Array(shape.length);
+  let stride = 1;
+  for (let i = shape.length - 1; i >= 0; i--) {
+    strides[i] = stride;
+    stride *= shape[i];
+  }
+  return strides;
 }
 
 export function inferShape(
-	data: TensorLike | RecursiveArray,
-	shape: number[] = []
+  data: TensorLike | RecursiveArray,
+  shape: number[] = []
 ): number[] {
-	if (!Array.isArray(data) && !isTypedArray(data)) {
-		return [1];
-	}
-	shape.push(data.length);
-	for (const element of data) {
-		if (Array.isArray(element) || isTypedArray(element)) {
-			inferShape(element, shape);
-			break;
-		}
-	}
-	return shape;
+  if (!Array.isArray(data) && !isTypedArray(data)) {
+    return [1];
+  }
+  shape.push(data.length);
+  for (const element of data) {
+    if (Array.isArray(element) || isTypedArray(element)) {
+      inferShape(element, shape);
+      break;
+    }
+  }
+  return shape;
 }
 
 export function flattenArray(
-	data: TensorLike | RecursiveArray
+  data: TensorLike | RecursiveArray
 ): (number | boolean)[] {
-	if (!Array.isArray(data) && !isTypedArray(data)) {
-		return [data];
-	}
-	const flatArray = [];
-	for (let i = 0; i < data.length; i++) {
-		flatArray.push(...flattenArray(data[i]));
-	}
-	return flatArray;
+  if (!Array.isArray(data) && !isTypedArray(data)) {
+    return [data];
+  }
+  const flatArray = [];
+  for (let i = 0; i < data.length; i++) {
+    flatArray.push(...flattenArray(data[i]));
+  }
+  return flatArray;
 }
 
 export function assertValidShape(shape: number[]): void {
-	assert(shape.length > 0, "Shape must be at least 1-dimensional");
-	assert(
-		shape.every((s) => s > 0),
-		"Each dimension of shape must be positive value"
-	);
+  assert(shape.length > 0, "Shape must be at least 1-dimensional");
+  assert(
+    shape.every((s) => s > 0),
+    "Each dimension of shape must be positive value"
+  );
 }
 
 // export function assertShape(shape: number[], size?: number): void {
@@ -90,45 +90,45 @@ export function assertValidShape(shape: number[]): void {
 // }
 
 export function isEqualShape(
-	inputShape: number[],
-	otherShape: number[]
+  inputShape: number[],
+  otherShape: number[]
 ): boolean {
-	if (inputShape.length !== otherShape.length) return false;
-	for (let i = 0; i < inputShape.length; i++) {
-		if (inputShape[i] !== otherShape[i]) return false;
-	}
-	return true;
+  if (inputShape.length !== otherShape.length) return false;
+  for (let i = 0; i < inputShape.length; i++) {
+    if (inputShape[i] !== otherShape[i]) return false;
+  }
+  return true;
 }
 
 export function computeBroadcastedStrides(
-	oriShape: number[],
-	oriStrides: number[],
-	newShape: number[]
+  oriShape: number[],
+  oriStrides: number[],
+  newShape: number[]
 ) {
-	const oriShape_ = [...oriShape]; // make deepcopy
-	const oriStrides_ = [...oriStrides];
+  const oriShape_ = [...oriShape]; // make deepcopy
+  const oriStrides_ = [...oriStrides];
 
-	while (oriShape_.length != newShape.length) {
-		if (oriShape_.length < newShape.length) {
-			oriShape_.unshift(1);
-			oriStrides_.unshift(0);
-		}
-	}
+  while (oriShape_.length != newShape.length) {
+    if (oriShape_.length < newShape.length) {
+      oriShape_.unshift(1);
+      oriStrides_.unshift(0);
+    }
+  }
 
-	const newStrides = [];
-	for (let i = oriShape_.length - 1; i >= 0; i--) {
-		if (oriShape_[i] === newShape[i]) {
-			newStrides.unshift(oriStrides_[i]);
-		} else {
-			newStrides.unshift(0);
-		}
-	}
+  const newStrides = [];
+  for (let i = oriShape_.length - 1; i >= 0; i--) {
+    if (oriShape_[i] === newShape[i]) {
+      newStrides.unshift(oriStrides_[i]);
+    } else {
+      newStrides.unshift(0);
+    }
+  }
 
-	return newStrides;
+  return newStrides;
 }
 
 export function isBroadcasted<D extends DType>(tensor: Tensor<D>): number {
-	return Number(tensor.strides.some((stride) => stride === 0));
+  return Number(tensor.strides.some((stride) => stride === 0));
 }
 
 // export function emptyTypedArray<D extends DType>(

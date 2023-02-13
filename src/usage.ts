@@ -1,11 +1,13 @@
 import * as minitensor from ".";
 
-const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4, 3]);
+const a = minitensor.fromTensorLike(
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  [4, 3]
+);
 
 // TODO: unit test for slice
 // TODO: cover -ve step slicing
 // TODO: option to flatten the sliced tensor into 1D
-
 
 // // Single element indexing
 // // Slicing
@@ -29,7 +31,6 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // minitensor.slice(a, [{"-4": -3}, {"-3":3}])
 // minitensor.slice(a, [{0:1}, null])
 
-
 // console.log("\n")
 
 // // selection -> begin and shape
@@ -40,7 +41,6 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // // shape = [1, 3]
 // // strides = [3, 1]
 // // offset = 0
-
 
 // // slice a column
 // // a[:, 0] === a[0:3, 0]
@@ -57,7 +57,6 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // // shape = [4, 1]
 // // strides = [3, 1]
 // // offset = 0
-
 
 // // select an entry
 // // a[0, 0]
@@ -84,7 +83,6 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // // strides = [3, 1]
 // // offset = 0
 
-
 // slice with step
 // a[0:4:2, 0:3:1]
 // minitensor.slice(a, [{0:4, step:2}, {0:3, step:1}])
@@ -99,7 +97,7 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // tensor = [[1, 2, 3], [7, 8, 9]]
 
 // a[0:4:2, 0:3:2]
-// minitensor.slice(a, [{0:4, step:2}, {0:3, step:2}]) 
+// minitensor.slice(a, [{0:4, step:2}, {0:3, step:2}])
 // selection -> begin and shape
 // begin = [0, 0]
 // shape = [2, 2]
@@ -135,7 +133,7 @@ const a = minitensor.fromTensorLike([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], [4,
 // tensor = [[4], [10]]
 
 // a[0:4:-1, :]
-minitensor.slice(a, [{0:4, step:-1}, null])
+minitensor.slice(a, [{ 0: 4, step: -1 }, null]);
 // selection -> begin and shape
 // begin = [3, 0]
 // shape = [4, 3]
@@ -148,7 +146,7 @@ minitensor.slice(a, [{0:4, step:-1}, null])
 // tensor = [[10, 11, 12], [7, 8, 9], [4, 5, 6], [1, 2, 3]]
 
 // a[0:4:-2, :]
-minitensor.slice(a, [{0:4, step:-2}, null])
+minitensor.slice(a, [{ 0: 4, step: -2 }, null]);
 // selection -> begin and shape
 // begin = [3, 0]
 // shape = [2, 3]
