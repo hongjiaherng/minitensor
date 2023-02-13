@@ -7,9 +7,9 @@ import { inferDTypeFromTensorLikeObj, castToTypedArray } from "./types";
 
 
 export class Storage<D extends DType> {
-  size: number;
-  dtype: D;
-  storage: TypedArrayMap[D];
+  public readonly size: number;
+  public readonly dtype: D;
+  public readonly storage: TypedArrayMap[D];
 
   constructor(data: TensorLike, dtype?: D) {
     this.dtype = dtype ?? inferDTypeFromTensorLikeObj(data) as D;

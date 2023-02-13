@@ -1,7 +1,8 @@
 import assert from "assert";
 import { Tensor } from "../../tensor";
 import { DType } from "../../types";
-import { asStrided, tensor } from "../creation";
+import { asStrided } from "../creation";
+import { squeeze_ } from "./squeeze";
 
 interface DimensionSlicingSelection {
   [start: number]: number | string | null;
@@ -12,22 +13,25 @@ type SlicingSelection = DimensionSelection[];
 
 export function slice<D extends DType>(
   x: Tensor<D>,
-  selection: SlicingSelection
+  selection: SlicingSelection,
+  keepDim: boolean = false
 ): Tensor<D> {
-  console.log(selection);
-
   /**
-   * selection -> beginIndices, slicedShape
+   * 1) selection -> beginIndices, slicedShape, slicedStrides
    *
    * selection[i] is either a number, a slicing selection, null, or undefined
    * - number: select a single entry
    * - slicing selection: select a range of entries
    * - null or undefined: select all entries
+   *
+   * 2) beginIndices, slicedShape, slicedStrides -> slicedOffset
+   *
+   * 3) slicedStrides, slicedOffset, slicedShape -> new tensor view
    */
 
   assertSlicingSelectionIsValid(selection, x.shape);
 
-  // turn selection into begin and shape
+  // turn selection into beginIndices, slicedShape, and slicedStrides
   const slicedShape = new Array(x.shape.length);
   const beginIndices = new Array(x.shape.length);
   const slicedStrides = new Array(x.shape.length);
@@ -46,30 +50,23 @@ export function slice<D extends DType>(
       const [start, end] = getStartAndEndIndex(
         selection[i] as DimensionSlicingSelection,
         x.shape[i]
-      );
+      ); // handle negative or null start and end index
       const step = (selection[i] as DimensionSlicingSelection).step ?? 1;
-      beginIndices[i] = start;
-      slicedShape[i] = Math.ceil((end - start) / step);
+      beginIndices[i] = step > 0 ? start : end - 1;
+      slicedShape[i] = Math.ceil((end - start) / Math.abs(step));
       slicedStrides[i] = x.strides[i] * step;
-      // console.log(slicedStrides);
     }
   }
 
-  // console.log("beginIndices", beginIndices);
-  // console.log("slicedShape", slicedShape);
-  // console.log();
-
-  // turn begin and shape into strides and offset
+  // calculate new offset using beginIndices and old strides
   const slicedOffset =
     x.offset +
     beginIndices.reduce((acc, beginI, i) => acc + beginI * x.strides[i], 0);
 
   // create new tensor view with new strides, offset, and shape
-  const slicedTensor = asStrided(x, slicedShape, slicedStrides, slicedOffset);
-  console.log(slicedTensor.array());
-  console.log(slicedTensor);
-  console.log();
-  return slicedTensor;
+  return keepDim
+    ? asStrided(x, slicedShape, slicedStrides, slicedOffset)
+    : squeeze_(asStrided(x, slicedShape, slicedStrides, slicedOffset));
 }
 
 function getStartAndEndIndex(
@@ -145,18 +142,21 @@ function assertSlicingSelectionIsValid(
     selection.length > 0,
     "No index was provided for tensor, at least 1 index is required"
   );
-  assert(
-    selection.every((dimSelection) => {
-      if (
-        dimSelection !== null &&
-        typeof dimSelection === "object" &&
-        typeof (dimSelection as DimensionSlicingSelection).step !== "undefined"
-      ) {
-        return (dimSelection as DimensionSlicingSelection).step !== 0;
-      } else {
-        return true;
-      }
-    }),
-    "Step must be non-zero"
-  );
+  selection.forEach((dimSelection, i) => {
+    if (dimSelection !== null && typeof dimSelection === "object") {
+      const [start, end] = getStartAndEndIndex(
+        dimSelection as DimensionSlicingSelection,
+        shape[i]
+      );
+      assert(
+        start < end,
+        `Invalid slice selection: start index ${start} must be smaller than end index ${end}`
+      );
+
+      assert(
+        (dimSelection as DimensionSlicingSelection).step !== 0,
+        "Step must be non-zero"
+      );
+    }
+  });
 }

@@ -6,18 +6,19 @@ import { isBroadcasted } from "./utils";
  * Tensors are immutable
  *
  * Definition of "Tensors are immutable":
- * - shape, strides, offset, dtype, size cannot be mutated
- * - data can be mutated, but only by mutating the underlying storage's storage (not assigning a new storage reference)
+ * - shape, strides, offset, size can be mutated
+ * - reference to data cannot be mutated, but only by mutating the underlying data's storage (not assigning a new storage reference)
+ * - dtype cannot be mutated
  *
  */
 
 export class Tensor<D extends DType> {
-  public readonly shape: number[];
-  public readonly strides: number[];
-  public readonly offset: number;
+  public shape: number[];
+  public strides: number[];
+  public offset: number;
   public readonly data: Storage<D>;
   public readonly dtype: D;
-  public readonly size: number;
+  public size: number;
   public getByIndex: (index: number) => PrimTypeMap[D];
 
   constructor(
@@ -61,6 +62,10 @@ export class Tensor<D extends DType> {
     };
 
     return _recursiveArray([...this.shape], this.offset);
+  }
+
+  public set(): void {
+
   }
 
   _indexToOffset(index: number): number {

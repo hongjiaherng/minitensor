@@ -1,7 +1,7 @@
 import { Tensor } from "../../tensor";
 import { DType } from "../../types";
 import { computeStrides } from "../../utils";
-import { asStrided } from "../creation/as_strided";
+import { asStrided, asStrided_ } from "../creation/as_strided";
 
 export function reshape<D extends DType>(
   x: Tensor<D>,
@@ -10,6 +10,15 @@ export function reshape<D extends DType>(
   // create new tensor with same storage, modify shape, strides, and offset (no change)
   shape = inferUnknownDimension(x.size, shape);
   return asStrided(x, shape, computeStrides(shape));
+}
+
+export function reshape_<D extends DType>(
+  x: Tensor<D>,
+  shape: number[]
+): Tensor<D> {
+  // modify shape, strides, and offset (no change)
+  shape = inferUnknownDimension(x.size, shape);
+  return asStrided_(x, shape, computeStrides(shape));
 }
 
 export function inferUnknownDimension(size: number, shape: number[]): number[] {
