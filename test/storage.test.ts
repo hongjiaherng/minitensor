@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import { Storage } from "./storage";
+import { Storage } from "../src";
 
 describe("Storage initialization with data but no dtype specified", () => {
   test('input: typeof data === "number"; expect: this.dtype === "float32", this.storage instanceof Float32Array', () => {

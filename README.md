@@ -81,3 +81,6 @@
   diag, diagflat, triu, tril, tri, vander, hstack, vstack, dstack, stack,
   columnStack, rowStack, block, meshgrid, arange, repeat, tile, diag, diagflat,
   triu, tril, tri, vander, hstack, vstack
+
+# Documentation
+- Docusaurus
