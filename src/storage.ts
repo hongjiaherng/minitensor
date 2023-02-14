@@ -21,6 +21,10 @@ export class Storage<D extends DType> {
   get(index: number): number {
     return this.storage[index];
   }
+
+  set(index: number, value: number): void {
+    this.storage[index] = value;
+  }
 }
 
 export function flattenArray(

@@ -1,6 +1,8 @@
-import { isBroadcastedTensor } from "./ops/broadcast";
+import { isBroadcastedTensor, TensorsIterator } from "./ops/broadcast";
+import { tensor } from "./ops/creation";
+import { expand } from "./ops/view";
 import { Storage } from "./storage";
-import { DType, PrimTypeMap, RecursiveArray } from "./types";
+import { DType, PrimTypeMap, RecursiveArray, TensorLike } from "./types";
 
 /**
  * Tensors are immutable
@@ -20,6 +22,7 @@ export class Tensor<D extends DType> {
   public readonly dtype: D;
   public size: number;
   public getByIndex: (index: number) => PrimTypeMap[D];
+  public setByIndex: (index: number, value: PrimTypeMap[D]) => void;
 
   constructor(
     data: Storage<D>,
@@ -36,6 +39,7 @@ export class Tensor<D extends DType> {
     this.size = this.shape.reduce((a, b) => a * b, 1);
 
     this.getByIndex = createGetByIndexMethod(this);
+    this.setByIndex = createSetByIndexMethod(this);
   }
 
   public array(): RecursiveArray {
@@ -64,15 +68,31 @@ export class Tensor<D extends DType> {
     return _recursiveArray([...this.shape], this.offset);
   }
 
-  public set(): void {
-    throw new Error("Method not implemented.");
+  public set(data: Tensor<D> | TensorLike | RecursiveArray): void {
+    // TODO: add support for whatever dtype of Tensor
+    /**
+     * cannot be used on broadcasted tensors, this must be a non-broadcasted tensor
+     */
     // handle scalar value or tensor with size 1
     // Broadcast input to this.shape
     // set data by iterating through
+    if (isBroadcastedTensor(this))
+      throw new Error(
+        "unsupported operation: cannot set values on broadcasted / expanded tensors. Please clone() the tensor before performing the operation."
+      );
+
+    const subTensor =
+      data instanceof Tensor ? data : tensor(data, undefined, this.dtype);
+    const subTensor_ = expand(subTensor, this.shape); // broadcast to this.shape if necessary
+    const tensorsIterator = new TensorsIterator(subTensor_);
+
+    tensorsIterator.forEach(([subTensorVal], i) => {
+      this.setByIndex(i, subTensorVal);
+    });
   }
 
   _indexToOffset(index: number): number {
-    let offset = 0;
+    let offset = this.offset;
     for (let i = this.shape.length - 1; i >= 0; i--) {
       offset += (index % this.shape[i]) * this.strides[i];
       index = Math.floor(index / this.shape[i]);
@@ -101,4 +121,16 @@ function createGetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
     }
   }
   return getByIndex;
+}
+
+function createSetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
+  let setByIndex: (index: number, value: PrimTypeMap[D]) => void;
+  if (isBroadcastedTensor(tensor)) {
+    setByIndex = (index: number, value: PrimTypeMap[D]) =>
+      tensor.data.set(tensor._indexToOffset(index), Number(value));
+  } else {
+    setByIndex = (index: number, value: PrimTypeMap[D]) =>
+      tensor.data.set(index, Number(value));
+  }
+  return setByIndex;
 }

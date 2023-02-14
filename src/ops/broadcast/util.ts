@@ -53,6 +53,13 @@ export class TensorsIterator<D extends DType>
   [Symbol.iterator](): TensorsIterator<D> {
     return this;
   }
+
+  forEach(callbackfn: (value: PrimTypeMap[D][], index: number) => void): void {
+    for (const value of this) {
+      callbackfn(value, this.index - 1);
+    }
+  }
+
 }
 
 export function areBroadcastableTogether<D extends DType>(
