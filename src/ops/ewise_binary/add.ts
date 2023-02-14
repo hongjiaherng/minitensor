@@ -1,10 +1,6 @@
 import { Tensor } from "../../tensor";
-import { DType, RecursiveArray, TensorLike, upcastType } from "../../types";
-import { broadcastTensors } from "../broadcast/broadcast_tensors";
-import { TensorsIterator } from "../broadcast/tensors_iterator";
-import { fromTensorLike } from "../creation";
-import { tensor } from "../creation/tensor";
-import { reshape } from "../view/reshape";
+import { DType, TensorLike, RecursiveArray } from "../../types";
+import { tensor } from "../creation";
 
 export function add<D extends DType>(
   input: Tensor<D> | TensorLike | RecursiveArray,
@@ -15,29 +11,30 @@ export function add<D extends DType>(
   // determine target dtype
   // create new tensor with target dtype
 
-  let input_ = input instanceof Tensor ? input : tensor(input);
-  let other_ = other instanceof Tensor ? other : tensor(other);
+  // let input_ = input instanceof Tensor ? input : tensor(input);
+  // let other_ = other instanceof Tensor ? other : tensor(other);
 
-  [input_, other_] = broadcastTensors(input_, other_);
+  // [input_, other_] = broadcastTensors(input_, other_);
 
-  const targetArray = [];
-  const targetDType = upcastType(input_.dtype, other_.dtype);
+  // const targetArray = [];
+  // const targetDType = upcastType(input_.dtype, other_.dtype);
 
-  const tensorsIterator = new TensorsIterator(input_, other_);
+  // const tensorsIterator = new TensorsIterator(input_, other_);
 
-  if (targetDType === "bool") {
-    for (const [inputVal, otherVal] of tensorsIterator) {
-      targetArray.push((inputVal as boolean) || (otherVal as boolean));
-    }
-  } else {
-    for (const [inputVal, otherVal] of tensorsIterator) {
-      targetArray.push(Number(inputVal) + Number(otherVal));
-    }
-  }
+  // if (targetDType === "bool") {
+  //   for (const [inputVal, otherVal] of tensorsIterator) {
+  //     targetArray.push((inputVal as boolean) || (otherVal as boolean));
+  //   }
+  // } else {
+  //   for (const [inputVal, otherVal] of tensorsIterator) {
+  //     targetArray.push(Number(inputVal) + Number(otherVal));
+  //   }
+  // }
 
-  return fromTensorLike(
-    targetArray as TensorLike,
-    input_.shape,
-    targetDType
-  ) as Tensor<D>;
+  // return fromTensorLike(
+  //   targetArray as TensorLike,
+  //   input_.shape,
+  //   targetDType
+  // ) as Tensor<D>;
+  return input instanceof Tensor ? input : tensor(input);
 }

@@ -1,7 +1,16 @@
+import { areShapesEqual } from "../../shape_strides_util";
 import { Tensor } from "../../tensor";
 import { DType, PrimTypeMap } from "../../types";
-import { isEqualShape } from "../../utils";
+import { expand } from "../view";
+import { broadcastShapes } from "./broadcast_shapes";
 
+export function isBroadcastedTensor<D extends DType>(
+  tensor: Tensor<D>
+): number {
+  return Number(tensor.strides.some((stride) => stride === 0));
+}
+
+// tensor iterators
 export class TensorsIterator<D extends DType>
   implements Iterator<PrimTypeMap[D][]>
 {
@@ -16,7 +25,8 @@ export class TensorsIterator<D extends DType>
     if (
       tensors.some(
         (t) =>
-          t.size !== tensors[0].size || !isEqualShape(t.shape, tensors[0].shape)
+          t.size !== tensors[0].size ||
+          !areShapesEqual(t.shape, tensors[0].shape)
       )
     )
       throw new Error("All tensors must have the same shape and size");
@@ -36,11 +46,35 @@ export class TensorsIterator<D extends DType>
     this.index += 1;
     return {
       done: false,
-      value: value,
+      value: value
     };
   }
 
   [Symbol.iterator](): TensorsIterator<D> {
     return this;
+  }
+}
+
+export function areBroadcastableTogether<D extends DType>(
+  ...tensors: Tensor<D>[]
+): boolean {
+  if (tensors.length < 2) throw new Error("At least 2 tensors are required");
+  try {
+    broadcastShapes(...tensors.map((t) => t.shape));
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export function isBroadcastableTo<D extends DType>(
+  tensor: Tensor<D>,
+  shape: number[]
+): boolean {
+  try {
+    expand(tensor, shape);
+    return true;
+  } catch (error) {
+    return false;
   }
 }

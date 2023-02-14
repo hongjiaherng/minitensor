@@ -1,32 +1,29 @@
-export function broadcastShapes(
-  inputShape: number[],
-  otherShape: number[]
-): number[] {
-  const inputShape_ = [...inputShape]; // make deepcopy
-  const otherShape_ = [...otherShape];
-  const resultShape = [];
+import { assertValidShape } from "../../shape_strides_util";
 
-  // pad with 1s if shapes are not the same length
-  while (inputShape_.length != otherShape_.length) {
-    if (inputShape_.length < otherShape_.length) {
-      inputShape_.unshift(1);
-    } else {
-      otherShape_.unshift(1);
-    }
-  }
+export function broadcastShapes(...shapes: number[][]): number[] {
+  shapes.forEach((shape) => assertValidShape(shape)); // validate shapes
+  if (shapes.length < 2) return shapes[0]; // no need to broadcast if there is only one shape, return the shape directly, undefined if shapes is empty
 
-  for (let i = inputShape_.length - 1; i >= 0; i--) {
-    if (
-      inputShape_[i] !== otherShape_[i] &&
-      inputShape_[i] !== 1 &&
-      otherShape_[i] !== 1
-    ) {
+  // find the max rank
+  const maxRank = Math.max(...shapes.map((shape) => shape.length));
+  const newShape = new Array<number>(maxRank);
+
+  for (let i = 0; i < maxRank; i++) {
+    const dimSizes = shapes.reduce((dimSizes, shape) => {
+      const dimSize = shape.at(-(i + 1)); // index from the end, e.g. -1 is the last element; return undefined if out of bound
+      if (dimSize !== undefined) dimSizes.add(dimSize);
+      return dimSizes;
+    }, new Set([1]));
+
+    // if there are more than 2 unique dim sizes, i.e., {1, dim_1, dim_2}, then the shapes are not broadcastable
+    if (dimSizes.size > 2) {
       throw new Error(
-        `Incompatible shapes to be braodcasted together: [${inputShape}] and [${otherShape}]`
+        `Incompatible shapes to be broadcasted together: ${shapes.map(
+          (shape) => "[" + shape + "]"
+        )}`
       );
     }
-    resultShape.unshift(Math.max(inputShape_[i], otherShape_[i]));
+    newShape[maxRank - 1 - i] = Math.max(...dimSizes);
   }
-
-  return resultShape;
+  return newShape;
 }

@@ -1,6 +1,6 @@
+import { isBroadcastedTensor } from "./ops/broadcast";
 import { Storage } from "./storage";
-import { DType, PrimTypeMap, RecursiveArray, TensorLike } from "./types";
-import { isBroadcasted } from "./utils";
+import { DType, PrimTypeMap, RecursiveArray } from "./types";
 
 /**
  * Tensors are immutable
@@ -65,7 +65,10 @@ export class Tensor<D extends DType> {
   }
 
   public set(): void {
-
+    throw new Error("Method not implemented.");
+    // handle scalar value or tensor with size 1
+    // Broadcast input to this.shape
+    // set data by iterating through
   }
 
   _indexToOffset(index: number): number {
@@ -81,7 +84,7 @@ export class Tensor<D extends DType> {
 // factory method to create a getByIndexMethod based on strides and dtype
 function createGetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
   let getByIndex: (index: number) => PrimTypeMap[D];
-  if (isBroadcasted(tensor)) {
+  if (isBroadcastedTensor(tensor)) {
     if (tensor.dtype === "bool") {
       getByIndex = (index: number) =>
         !!tensor.data.get(tensor._indexToOffset(index)) as PrimTypeMap[D];

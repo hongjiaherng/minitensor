@@ -1,5 +1,5 @@
 export { Tensor } from "./tensor";
-export { Storage } from "./storage";
+export { Storage, sharesMemory } from "./storage";
 
 export {
   arange,
@@ -7,17 +7,28 @@ export {
   empty,
   full,
   tensor,
-  fromTensorLike,
   asStrided_
 } from "./ops/creation";
+
 export {
   reshape,
   slice,
   squeeze,
-  viewUtils,
   reshape_,
-  squeeze_
+  squeeze_,
+  expand
 } from "./ops/view";
+
 export { add } from "./ops/ewise_binary";
 
-export * as broadcast from "./ops/broadcast";
+export {
+  broadcastShapes,
+  broadcastTensors,
+  broadcastTo,
+  isBroadcastedTensor,
+  TensorsIterator,
+  areBroadcastableTogether,
+  isBroadcastableTo
+} from "./ops/broadcast";
+
+export { computeExpandedStrides, computeStrides } from "./shape_strides_util";

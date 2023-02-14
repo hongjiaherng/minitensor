@@ -13,5 +13,5 @@ export function arange<D extends DType>(
   for (let i = 0; i < size; i++) {
     data.push(start + i * step);
   }
-  return tensor(data, dtype);
+  return tensor(data, undefined, dtype);
 }

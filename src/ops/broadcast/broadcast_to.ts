@@ -1,8 +1,20 @@
+import {
+  areShapesEqual,
+  computeExpandedStrides
+} from "../../shape_strides_util";
 import { Tensor } from "../../tensor";
 import { DType } from "../../types";
-import { computeBroadcastedStrides, isEqualShape } from "../../utils";
-import { asStrided } from "../creation/as_strided";
-import { isBroadcastable } from "./is_broadcastable";
+import { asStrided } from "../creation";
+import { expand } from "../view";
+
+export function broadcastTo<D extends DType>(
+  input: Tensor<D>,
+  shape: number[]
+): Tensor<D> {
+  // exposed to user, validate shape
+  // call view.expand internally
+  return expand(input, shape);
+}
 
 export function _broadcastTo<D extends DType>(
   input: Tensor<D>,
@@ -11,27 +23,12 @@ export function _broadcastTo<D extends DType>(
   // no validation here, assume the shape is valid
   // check if shape is compatible with input shape
   // create new tensor with same storage, modify shape, strides, and offset (no change)
+  if (areShapesEqual(input.shape, shape)) return input;
 
-  if (isEqualShape(input.shape, shape)) return input;
-
-  const newStrides = computeBroadcastedStrides(
+  const expandedStrides = computeExpandedStrides(
     input.shape,
     input.strides,
     shape
   );
-
-  return asStrided(input, shape, newStrides, input.offset);
-}
-
-export function broadcastTo<D extends DType>(
-  input: Tensor<D>,
-  shape: number[]
-): Tensor<D> {
-  // this function is not used internally, it is exposed for user to check if two shapes are broadcastable, inefficient operations due to alot of checks
-
-  if (!isBroadcastable(input.shape, shape))
-    throw new Error(
-      `Incompatible shapes to be braodcasted together: [${input.shape}] and [${shape}]`
-    );
-  return _broadcastTo(input, shape);
+  return asStrided(input, shape, expandedStrides, input.offset);
 }

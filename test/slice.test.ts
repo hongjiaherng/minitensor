@@ -1,6 +1,5 @@
 import * as minitensor from "../src";
 import { describe, expect, test } from "@jest/globals";
-import { sharesMemory } from "../src/ops/view/utils";
 
 // Testing with 2D tensor
 const tensor = minitensor.reshape(minitensor.arange(1, 13), [4, 3]);
@@ -13,14 +12,14 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, 0], false);
     expect(sliced.shape).toEqual([1]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [0, {0:1}])", () => {
@@ -29,14 +28,14 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, { 0: 1 }], false);
     expect(sliced.shape).toEqual([1]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:1}, 0])", () => {
@@ -45,14 +44,14 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 1 }, 0], false);
     expect(sliced.shape).toEqual([1]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:1}, {0:1}])", () => {
@@ -61,14 +60,14 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 1 }, { 0: 1 }], false);
     expect(sliced.shape).toEqual([1]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [-4, -3])", () => {
@@ -77,14 +76,14 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [-4, -3], false);
     expect(sliced.shape).toEqual([1]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:1, step:1}, {0:1, step:1}])", () => {
@@ -100,7 +99,7 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(
       tensor,
@@ -114,7 +113,7 @@ describe("Single element indexing", () => {
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
     expect(sliced.size).toEqual(1);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 });
 
@@ -125,13 +124,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [0, null])", () => {
@@ -139,13 +138,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, null], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:1}, null])", () => {
@@ -153,13 +152,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 1 }, null], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:1, step:1}, null])", () => {
@@ -167,13 +166,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 1, step: 1 }, null], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [-4, null])", () => {
@@ -181,13 +180,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [-4, null], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [{"-4": -3, step:1}, null])', () => {
@@ -195,13 +194,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ "-4": -3, step: 1 }, null], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [0, {0:3}])", () => {
@@ -209,13 +208,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, { 0: 3 }], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [0, {0:3, step:1}])", () => {
@@ -223,13 +222,13 @@ describe("Row slicing", () => {
     expect(sliced.shape).toEqual([1, 3]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, { 0: 3, step: 1 }], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [0, {"-3":3}])', () => {
@@ -238,13 +237,13 @@ describe("Row slicing", () => {
     expect(sliced.strides).toEqual([3, 1]);
     console.log(sliced.offset);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [0, { "-3": 3 }], false);
     expect(sliced.shape).toEqual([3]);
     expect(sliced.strides).toEqual([1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 });
 
@@ -255,13 +254,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, 0], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [null, {0:1}])", () => {
@@ -269,13 +268,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, { 0: 1 }], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [null, {0:1, step:1}])", () => {
@@ -283,13 +282,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, { 0: 1, step: 1 }], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [null, -3])", () => {
@@ -297,13 +296,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, -3], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [null, {"-3":1}])', () => {
@@ -311,13 +310,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, { "-3": 1 }], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [null, {"-3":-2}])', () => {
@@ -325,13 +324,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [null, { "-3": -2 }], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:4}, 0])", () => {
@@ -339,13 +338,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 4 }, 0], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{0:4, step:1}, 0])", () => {
@@ -353,13 +352,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 4, step: 1 }, 0], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [{"-4":4}, 0])', () => {
@@ -367,13 +366,13 @@ describe("Column slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ "-4": 4 }, 0], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([3]);
     expect(sliced.offset).toEqual(0);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 });
 
@@ -384,7 +383,7 @@ describe("Sub-tensor slicing", () => {
     expect(sliced.shape).toEqual([2, 2]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(3);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [{ "-3": -1 }, { 0: 2 }])', () => {
@@ -392,7 +391,7 @@ describe("Sub-tensor slicing", () => {
     expect(sliced.shape).toEqual([2, 2]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(3);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [{ 1: 3 }, { "-3": -1 }])', () => {
@@ -400,7 +399,7 @@ describe("Sub-tensor slicing", () => {
     expect(sliced.shape).toEqual([2, 2]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(3);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test('minitensor.slice(tensor, [{ "-3": -1 }, { "-3": -1 }])', () => {
@@ -408,7 +407,7 @@ describe("Sub-tensor slicing", () => {
     expect(sliced.shape).toEqual([2, 2]);
     expect(sliced.strides).toEqual([3, 1]);
     expect(sliced.offset).toEqual(3);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 });
 
@@ -419,13 +418,13 @@ describe("Negative step slicing", () => {
     expect(sliced.shape).toEqual([4, 1]);
     expect(sliced.strides).toEqual([-3, 1]);
     expect(sliced.offset).toEqual(9);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
 
     sliced = minitensor.slice(tensor, [{ 0: 4, step: -1 }, 0], false);
     expect(sliced.shape).toEqual([4]);
     expect(sliced.strides).toEqual([-3]);
     expect(sliced.offset).toEqual(9);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{ 0:4, step: -1 }, { 0:2, step: -1 }])", () => {
@@ -436,7 +435,7 @@ describe("Negative step slicing", () => {
     expect(sliced.shape).toEqual([4, 2]);
     expect(sliced.strides).toEqual([-3, -1]);
     expect(sliced.offset).toEqual(10);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 
   test("minitensor.slice(tensor, [{ 0: 4, step: -2 }, { 0: 2 }])", () => {
@@ -444,7 +443,6 @@ describe("Negative step slicing", () => {
     expect(sliced.shape).toEqual([2, 2]);
     expect(sliced.strides).toEqual([-6, 1]);
     expect(sliced.offset).toEqual(9);
-    expect(sharesMemory(sliced, tensor)).toBe(true);
-
+    expect(minitensor.sharesMemory(sliced, tensor)).toBe(true);
   });
 });

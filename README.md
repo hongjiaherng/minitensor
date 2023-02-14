@@ -84,3 +84,43 @@
 
 # Documentation
 - Docusaurus
+
+# Helper functions
+typing
+- upcastType
+- inferDTypeFromTensorLikeObj
+- inferDTypeFromTypedArray
+- castToTypedArray
+- isDTypeMatchedWithTypedArray
+
+shape & strides
+- computeExpandedStrides (exposed)
+- computeStrides (exposed)
+- inferShape
+- inferUnknownDimension
+- areShapesEqual
+- assertValidShape
+
+broadcast
+- isBroadcastedTensor (exposed)
+- broadcastTensors (exposed)
+- broadcastTo (exposed)
+- broadcastShapes (exposed)
+
+
+specialized (no export)
+- slice
+  - getStartAndEndIndex
+  - handlePotentialNegativeIndex
+  - handleStartIndex
+  - handleEndIndex
+  - assertSlicingSelectionIsValid
+- squeeze
+  - getSqueezedShapeAndStrides
+- Tensor
+  - createGetByIndexMethod
+
+
+storage
+  - sharesMemory (exposed)
+  - flattenArray (no export)
