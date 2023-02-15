@@ -59,56 +59,6 @@ export class TensorsIterator implements Iterator<any[]> {
   }
 }
 
-// export class TensorsIterator<D extends DType>
-//   implements Iterator<PrimTypeMap[D][]>
-// {
-//   private tensors: Tensor<D>[];
-//   private done: boolean;
-//   private index: number;
-
-//   constructor(...tensors: Tensor<D>[]) {
-//     if (tensors.length === 0)
-//       throw new Error("At least one tensor is required");
-
-//     if (
-//       tensors.some(
-//         (t) =>
-//           t.size !== tensors[0].size ||
-//           !areShapesEqual(t.shape, tensors[0].shape)
-//       )
-//     )
-//       throw new Error("All tensors must have the same shape and size");
-
-//     this.tensors = tensors;
-//     this.done = false;
-//     this.index = 0;
-//   }
-
-//   next(): IteratorResult<PrimTypeMap[D][]> {
-//     if (this.done) return { done: true, value: undefined };
-//     if (this.index >= this.tensors[0].size) {
-//       this.done = true;
-//       return { done: true, value: undefined };
-//     }
-//     const value = this.tensors.map((t) => t._getByIndex(this.index));
-//     this.index += 1;
-//     return {
-//       done: false,
-//       value: value
-//     };
-//   }
-
-//   [Symbol.iterator](): TensorsIterator<D> {
-//     return this;
-//   }
-
-//   forEach(callbackfn: (value: PrimTypeMap[D][], index: number) => void): void {
-//     for (const value of this) {
-//       callbackfn(value, this.index - 1);
-//     }
-//   }
-// }
-
 export function areBroadcastableTogether<D extends DType>(
   ...tensors: Tensor<D>[]
 ): boolean {

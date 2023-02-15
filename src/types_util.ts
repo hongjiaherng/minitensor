@@ -11,52 +11,52 @@ import { DType, TensorLike, TypedArray, TypedArrayMap } from "./types";
 
 // Order of precedence of type upcasting: float64 > float32 > int32 > int16 > bool
 
-enum UpcastInt16AndMap {
-  "float32" = "float32",
-  "float64" = "float64",
-  "int16" = "int16",
-  "int32" = "int32",
-  "bool" = "int16"
-}
+const UpcastInt16AndMap = {
+  [DType.float32]: DType.float32,
+  [DType.float64]: DType.float64,
+  [DType.int16]: DType.int16,
+  [DType.int32]: DType.int32,
+  [DType.bool]: DType.int16
+};
 
-enum UpcastInt32AndMap {
-  "float32" = "float32",
-  "float64" = "float64",
-  "int16" = "int32",
-  "int32" = "int32",
-  "bool" = "int32"
-}
+const UpcastInt32AndMap = {
+  [DType.float32]: DType.float32,
+  [DType.float64]: DType.float64,
+  [DType.int16]: DType.int32,
+  [DType.int32]: DType.int32,
+  [DType.bool]: DType.int32
+};
 
-enum UpcastBoolAndMap {
-  "float32" = "float32",
-  "float64" = "float64",
-  "int16" = "int16",
-  "int32" = "int32",
-  "bool" = "bool"
-}
+const UpcastBoolAndMap = {
+  [DType.float32]: DType.float32,
+  [DType.float64]: DType.float64,
+  [DType.int16]: DType.int16,
+  [DType.int32]: DType.int32,
+  [DType.bool]: DType.bool
+};
 
-enum UpcastFloat64AndMap {
-  "float32" = "float64",
-  "float64" = "float64",
-  "int16" = "float64",
-  "int32" = "float64",
-  "bool" = "float64"
-}
+const UpcastFloat64AndMap = {
+  [DType.float32]: DType.float64,
+  [DType.float64]: DType.float64,
+  [DType.int16]: DType.float64,
+  [DType.int32]: DType.float64,
+  [DType.bool]: DType.float64
+};
 
-enum UpcastFloat32AndMap {
-  "float32" = "float32",
-  "float64" = "float64",
-  "int16" = "float32",
-  "int32" = "float32",
-  "bool" = "float32"
-}
+const UpcastFloat32AndMap = {
+  [DType.float32]: DType.float32,
+  [DType.float64]: DType.float64,
+  [DType.int16]: DType.float32,
+  [DType.int32]: DType.float32,
+  [DType.bool]: DType.float32
+};
 
 const upcastTypeMap = {
-  float32: UpcastFloat32AndMap,
-  float64: UpcastFloat64AndMap,
-  int16: UpcastInt16AndMap,
-  int32: UpcastInt32AndMap,
-  bool: UpcastBoolAndMap
+  [DType.float32]: UpcastFloat32AndMap,
+  [DType.float64]: UpcastFloat64AndMap,
+  [DType.int16]: UpcastInt16AndMap,
+  [DType.int32]: UpcastInt32AndMap,
+  [DType.bool]: UpcastBoolAndMap
 };
 
 export function upcastType<D1 extends DType, D2 extends DType>(
@@ -71,36 +71,34 @@ export function inferDTypeFromTensorLikeObj(tensorLikeObj: TensorLike): DType {
     typeof tensorLikeObj === "number" ||
     (Array.isArray(tensorLikeObj) && typeof tensorLikeObj[0] === "number")
   ) {
-    return "float32";
+    return DType.float32;
   } else if (
     typeof tensorLikeObj === "boolean" ||
     (Array.isArray(tensorLikeObj) && typeof tensorLikeObj[0] === "boolean")
   ) {
-    return "bool";
+    return DType.bool;
   } else if (isTypedArray(tensorLikeObj)) {
     return inferDTypeFromTypedArray(tensorLikeObj);
   }
   throw new Error("Cannot infer DType from TensorLike object");
 }
 
-export function inferDTypeFromTypedArray<D extends DType>(
-  data: TypedArrayMap[D]
-): D {
+export function inferDTypeFromTypedArray(data: TypedArray): DType {
   if (data instanceof Float64Array) {
-    return "float64" as D;
+    return DType.float64;
   } else if (data instanceof Float32Array) {
-    return "float32" as D;
+    return DType.float32;
   } else if (data instanceof Int16Array) {
-    return "int16" as D;
+    return DType.int16;
   } else if (data instanceof Int32Array) {
-    return "int32" as D;
+    return DType.int32;
   } else if (data instanceof Uint8Array) {
     if (data.some((d) => d !== 0 && d !== 1)) {
       throw new Error(
         "Uint8Array should contain only 0s and 1s to be casted to bool"
       );
     }
-    return "bool" as D;
+    return DType.bool;
   }
   throw new Error("Cannot infer DType from TypedArray object");
 }
@@ -166,7 +164,6 @@ export function isDTypeMatchedWithTypedArray<D extends DType>(
   typedArray: TypedArray,
   dtype: D
 ): boolean {
-  if (!isTypedArray(typedArray)) return false;
   try {
     return inferDTypeFromTypedArray(typedArray) === dtype;
   } catch (error) {

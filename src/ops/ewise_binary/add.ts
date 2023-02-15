@@ -23,7 +23,7 @@ export function add<D1 extends DType, D2 extends DType>(
 
   const tensorsIterator = new TensorsIterator(input_, other_);
 
-  if (targetDType === "bool") {
+  if (targetDType === DType.bool) {
     for (const [inputVal, otherVal] of tensorsIterator) {
       targetArray.push((inputVal as boolean) || (otherVal as boolean));
     }

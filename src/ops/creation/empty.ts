@@ -4,8 +4,8 @@ import { full } from "./full";
 
 export function empty<D extends DType>(
   shape: number[],
-  dtype: D = "float32" as D
+  dtype: D = DType.float32 as D
 ): Tensor<D> {
-  const value = dtype === "bool" ? false : 0;
+  const value = dtype === DType.bool ? false : 0;
   return full(shape, value as PrimTypeMap[D], dtype);
 }

@@ -1,30 +1,32 @@
-import * as minitensor from ".";
-import { upcastType } from "./types_util";
+import * as minitensor from "."
 
 const a = minitensor.tensor(
   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
   [4, 3],
-  "float32"
+  minitensor.float32
 );
-a.clone();
-a.type("float32");
-a.type("int32");
-a.dtype;
-a.data;
+console.log(a)
+console.log(a.array())
 
-const b = minitensor.tensor([0, 1, 0], undefined, "bool");
-b.clone();
-b.type("float32");
-b.type("int32");
-b.type("bool");
+// a.clone();
+// a.type("float32");
+// a.type("int32");
+// a.dtype;
+// a.data;
 
-const c = minitensor.add(a, b)
-console.log(c);
-console.log(c.array())
+// const b = minitensor.tensor([0, 1, 0], undefined, "bool");
+// b.clone();
+// b.type("float32");
+// b.type("int32");
+// b.type("bool");
 
-const d = minitensor.add([1, 2, 3], [4, 5, 6])
-console.log(d)
-console.log(d.array())
+// const c = minitensor.add(a, b)
+// console.log(c);
+// console.log(c.array())
+
+// const d = minitensor.add([1, 2, 3], [4, 5, 6])
+// console.log(d)
+// console.log(d.array())
 
 
 // const int32Tensor = minitensor.tensor(

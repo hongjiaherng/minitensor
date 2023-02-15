@@ -6,7 +6,7 @@ export function arange<D extends DType>(
   start: number,
   end: number,
   step: number = 1,
-  dtype: D = "float32" as D
+  dtype: D = DType.float32 as D
 ): Tensor<D> {
   const size = Math.floor((end - start) / step);
   const data = [];
