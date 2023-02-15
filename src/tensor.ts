@@ -21,8 +21,8 @@ export class Tensor<D extends DType> {
   public readonly data: Storage<D>;
   public readonly dtype: D;
   public size: number;
-  public getByIndex: (index: number) => PrimTypeMap[D];
-  public setByIndex: (index: number, value: PrimTypeMap[D]) => void;
+  public _getByIndex: (index: number) => PrimTypeMap[D];
+  public _setByIndex: (index: number, value: PrimTypeMap[D]) => void;
 
   constructor(
     data: Storage<D>,
@@ -38,8 +38,8 @@ export class Tensor<D extends DType> {
     this.dtype = this.data.dtype;
     this.size = this.shape.reduce((a, b) => a * b, 1);
 
-    this.getByIndex = createGetByIndexMethod(this);
-    this.setByIndex = createSetByIndexMethod(this);
+    this._getByIndex = createGetByIndexMethod(this);
+    this._setByIndex = createSetByIndexMethod(this);
   }
 
   public array(): RecursiveArray {
@@ -68,27 +68,51 @@ export class Tensor<D extends DType> {
     return _recursiveArray([...this.shape], this.offset);
   }
 
-  public set(data: Tensor<D> | TensorLike | RecursiveArray): void {
-    // TODO: add support for whatever dtype of Tensor
+  public set<T extends DType>(
+    data: Tensor<T> | TensorLike | RecursiveArray
+  ): void {
     /**
      * cannot be used on broadcasted tensors, this must be a non-broadcasted tensor
      */
-    // handle scalar value or tensor with size 1
-    // Broadcast input to this.shape
-    // set data by iterating through
     if (isBroadcastedTensor(this))
       throw new Error(
         "unsupported operation: cannot set values on broadcasted / expanded tensors. Please clone() the tensor before performing the operation."
       );
 
-    const subTensor =
-      data instanceof Tensor ? data : tensor(data, undefined, this.dtype);
-    const subTensor_ = expand(subTensor, this.shape); // broadcast to this.shape if necessary
-    const tensorsIterator = new TensorsIterator(subTensor_);
+    let subTensor: Tensor<D> =
+      data instanceof Tensor
+        ? data.type(this.dtype)
+        : tensor(data, undefined, this.dtype);
+
+    subTensor = expand(subTensor, this.shape); // broadcast to this.shape if necessary
+    const tensorsIterator = new TensorsIterator(subTensor);
 
     tensorsIterator.forEach(([subTensorVal], i) => {
-      this.setByIndex(i, subTensorVal);
+      this._setByIndex(i, subTensorVal);
     });
+  }
+
+  public clone(): Tensor<D> {
+    // check if this is a broadcasted tensor
+    if (isBroadcastedTensor(this)) {
+      // create tensor using the nested array as it will produce the actual mutidimensional array without broadcasting
+      return tensor(this.array(), [...this.shape], this.dtype);
+    }
+    return new Tensor(this.data.clone(), [...this.shape], [...this.strides], 0);
+  }
+
+  public type<T extends DType>(dtype: T): Tensor<T> {
+    if ((this.dtype as DType) === (dtype as DType))
+      return this as unknown as Tensor<T>; // no need to convert
+    if (isBroadcastedTensor(this)) {
+      return tensor(this.array(), [...this.shape], dtype);
+    }
+    return new Tensor(
+      this.data.type(dtype),
+      [...this.shape],
+      [...this.strides],
+      0
+    );
   }
 
   _indexToOffset(index: number): number {

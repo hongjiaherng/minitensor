@@ -4,17 +4,15 @@ import { upcastType } from "../../types_util";
 import { broadcastTensors, TensorsIterator } from "../broadcast";
 import { tensor } from "../creation";
 
-// TODO: Fix the type error here caused by Tensor.setByIndex
-
-export function add<D extends DType>(
-  input: Tensor<D> | TensorLike | RecursiveArray,
-  other: Tensor<D> | TensorLike | RecursiveArray
-): Tensor<D> {
+export function add<D1 extends DType, D2 extends DType>(
+  input: Tensor<D1> | TensorLike | RecursiveArray,
+  other: Tensor<D2> | TensorLike | RecursiveArray
+) {
   // convert to tensor if not already
   // check if shapes are compatible and broadcast if not
   // determine target dtype
   // create new tensor with target dtype
-  
+
   let input_ = input instanceof Tensor ? input : tensor(input);
   let other_ = other instanceof Tensor ? other : tensor(other);
 

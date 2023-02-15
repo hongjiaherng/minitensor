@@ -18,12 +18,24 @@ export class Storage<D extends DType> {
     this.size = this.storage.length;
   }
 
-  get(index: number): number {
+  public get(index: number): number {
     return this.storage[index];
   }
 
-  set(index: number, value: number): void {
+  public set(index: number, value: number): void {
     this.storage[index] = value;
+  }
+
+  public clone(): Storage<D> {
+    return new Storage(this.storage.slice(), this.dtype);
+  }
+
+  public type<T extends DType>(dtype: T): Storage<T> {
+    if ((this.dtype as DType) === (dtype as DType)) {
+      // create new storage with same data, but different dtype since Storage is immutable
+      return this as unknown as Storage<T>;
+    }
+    return new Storage(this.storage, dtype);
   }
 }
 

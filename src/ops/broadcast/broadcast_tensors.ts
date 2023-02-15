@@ -4,9 +4,7 @@ import { DType } from "../../types";
 import { broadcastShapes } from "./broadcast_shapes";
 import { _broadcastTo } from "./broadcast_to";
 
-export function broadcastTensors<D extends DType>(
-  ...tensors: Tensor<D>[]
-): Tensor<D>[] {
+export function broadcastTensors(...tensors: Tensor<any>[]): Tensor<any>[] {
   if (tensors.length < 2) return tensors;
   if (areShapesEqual(...tensors.map((t) => t.shape))) return tensors;
 
