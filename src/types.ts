@@ -25,3 +25,8 @@ export interface PrimTypeMap {
 export type TypedArray = TypedArrayMap[DType];
 export type TensorLike = number | boolean | number[] | boolean[] | TypedArray;
 export type RecursiveArray = Array<RecursiveArray | number | boolean>;
+export type NumericDType =
+  | DType.float32
+  | DType.float64
+  | DType.int32
+  | DType.int16;

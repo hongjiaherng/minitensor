@@ -1,12 +1,17 @@
 import * as minitensor from "."
 
-const a = minitensor.tensor(
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-  [4, 3],
-  minitensor.float32
-);
-console.log(a)
-console.log(a.array())
+const a = new Float32Array(10)
+const b = new Uint8Array(10);
+console.log(a);
+console.log(b);
+
+// const a = minitensor.tensor(
+//   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+//   [4, 3],
+//   minitensor.float32
+// );
+// console.log(a)
+// console.log(a.array())
 
 // a.clone();
 // a.type("float32");
