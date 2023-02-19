@@ -7,7 +7,9 @@ export {
   empty,
   full,
   tensor,
-  asStrided_
+  asStrided_,
+  randNormal,
+  randUniform
 } from "./ops/creation";
 
 export {

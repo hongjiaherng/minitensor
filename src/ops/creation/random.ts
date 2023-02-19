@@ -4,12 +4,10 @@ import { empty } from "./empty";
 
 export function randNormal(
   shape: number[],
-  mean: number = 0,
-  std: number = 1,
   dtype: NumericDType = DType.float32,
   randomState?: number | string
 ) {
-  const rand = new NormalRandom(mean, std, dtype, randomState);
+  const rand = new NormalRandom(0, 1, dtype, randomState);
   const tensor = empty(shape, dtype);
   for (let i = 0; i < tensor.size; i++) {
     tensor._setByIndex(i, rand.next());

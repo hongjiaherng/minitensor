@@ -1,98 +1,31 @@
-import * as minitensor from "."
+import * as minitensor from ".";
 
-const a = new Float32Array(10)
-const b = new Uint8Array(10);
-console.log(a);
-console.log(b);
+const tensor = minitensor.reshape(minitensor.arange(1, 13), [4, 3]);
 
-// const a = minitensor.tensor(
-//   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-//   [4, 3],
-//   minitensor.float32
-// );
-// console.log(a)
-// console.log(a.array())
+let sliced;
 
-// a.clone();
-// a.type("float32");
-// a.type("int32");
-// a.dtype;
-// a.data;
-
-// const b = minitensor.tensor([0, 1, 0], undefined, "bool");
-// b.clone();
-// b.type("float32");
-// b.type("int32");
-// b.type("bool");
-
-// const c = minitensor.add(a, b)
-// console.log(c);
-// console.log(c.array())
-
-// const d = minitensor.add([1, 2, 3], [4, 5, 6])
-// console.log(d)
-// console.log(d.array())
+// multiple tries of slice with invalid selection
+// sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 0 }, 0]);
+// console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 1 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 2 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 3 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 4 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 5 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 6 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 7 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 8 }, 0]);
+console.log(sliced.array())
+sliced = minitensor.slice(tensor, [{ start: 0, stop: 4, step: 9 }, 0]);
+console.log(sliced.array())
 
 
-// const int32Tensor = minitensor.tensor(
-//   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
-//   [4, 3],
-//   "int32"
-// );
-// console.log(int32Tensor.array());
-// int32Tensor._setByIndex(6, 1000.12345);
-// console.log(int32Tensor.array());
 
-// int32Tensor.set([true, false, true])
-// console.log(int32Tensor.array());
 
-// const boolTensor = minitensor.tensor(
-//   [
-//     true,
-//     false,
-//     true,
-//     false,
-//     true,
-//     false,
-//     true, // 6th
-//     false,
-//     true,
-//     false,
-//     true,
-//     false
-//   ],
-//   [4, 3],
-//   "bool"
-// );
-
-// console.log(boolTensor.array());
-// boolTensor._setByIndex(6, false);
-// console.log(boolTensor.array());
-// boolTensor.set([100, 200, 300])
-
-// console.log(boolTensor.array());
-
-// console.log(a);
-// console.log(a.array());
-// console.log();
-
-// const sliced = minitensor.slice(a, [{ 0: 2 }, { 1: 3 }]);
-// console.log(sliced);
-// console.log(sliced.array());
-// console.log();
-
-// console.log(a);
-// console.log(a.array());
-
-// minitensor.slice(a, [3, null]).set(1000);
-
-// console.log(a);
-// console.log(a.array());
-
-// minitensor.slice(a, [null, 2]).set(true);
-// console.log(a);
-// console.log(a.array());
-
-// minitensor.slice(a, [0, 2]).set(3.542);
-// console.log(a);
-// console.log(a.array());
