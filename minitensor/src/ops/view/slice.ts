@@ -11,7 +11,7 @@ interface SlicingSelectionPerDim {
 }
 
 type SelectionPerDim = SlicingSelectionPerDim | number | null;
-type Selection = SelectionPerDim[];
+export type Selection = SelectionPerDim[];
 
 export function slice<D extends DType>(
   x: Tensor<D>,

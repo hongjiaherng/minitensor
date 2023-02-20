@@ -2,9 +2,9 @@ import { DType, NumericDType } from "../../types";
 import seedrandom from "seedrandom";
 import { empty } from "./empty";
 
-export function randNormal(
+export function randNormal<D extends NumericDType>(
   shape: number[],
-  dtype: NumericDType = DType.float32,
+  dtype: D = DType.float32 as D,
   randomState?: number | string
 ) {
   const rand = new NormalRandom(0, 1, dtype, randomState);
@@ -15,11 +15,11 @@ export function randNormal(
   return tensor;
 }
 
-export function randUniform(
+export function randUniform<D extends NumericDType>(
   shape: number[],
   low: number = 0,
   high: number = 1,
-  dtype: NumericDType = DType.float32,
+  dtype: D = DType.float32 as D,
   randomState?: number | string
 ) {
   const rand = new UniformRandom(low, high, dtype, randomState);

@@ -21,7 +21,7 @@ export {
   expand
 } from "./ops/view";
 
-export { add } from "./ops/ewise_binary";
+export { add, add_, mul, mul_ } from "./ops/ewise_binary";
 
 export {
   broadcastShapes,
@@ -42,4 +42,6 @@ const int16 = DType.int16;
 const int32 = DType.int32;
 const bool = DType.bool;
 
-export { float32, float64, int16, int32, bool };
+export { float32, float64, int16, int32, bool, DType };
+
+export * as datasets from "./datasets";

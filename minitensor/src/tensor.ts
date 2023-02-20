@@ -1,6 +1,15 @@
 import { isBroadcastedTensor, TensorsIterator } from "./ops/broadcast";
 import { tensor } from "./ops/creation";
-import { expand } from "./ops/view";
+import { add, add_, mul, mul_ } from "./ops/ewise_binary";
+import {
+  expand,
+  reshape,
+  reshape_,
+  slice,
+  squeeze,
+  squeeze_
+} from "./ops/view";
+import { Selection } from "./ops/view/slice";
 import { Storage } from "./storage";
 import { DType, PrimTypeMap, RecursiveArray, TensorLike } from "./types";
 
@@ -21,8 +30,6 @@ export class Tensor<D extends DType> {
   public readonly data: Storage<D>;
   public readonly dtype: D;
   public size: number;
-  public _getByIndex: (index: number) => PrimTypeMap[D];
-  public _setByIndex: (index: number, value: PrimTypeMap[D]) => void;
 
   constructor(
     data: Storage<D>,
@@ -37,9 +44,6 @@ export class Tensor<D extends DType> {
     this.data = data;
     this.dtype = this.data.dtype;
     this.size = this.shape.reduce((a, b) => a * b, 1);
-
-    this._getByIndex = createGetByIndexMethod(this);
-    this._setByIndex = createSetByIndexMethod(this);
   }
 
   public array(): RecursiveArray {
@@ -115,6 +119,16 @@ export class Tensor<D extends DType> {
     );
   }
 
+  public _getByIndex(index: number): PrimTypeMap[D] {
+    return this.dtype !== DType.bool
+      ? (this.data.get(this._indexToOffset(index)) as PrimTypeMap[D])
+      : (!!this.data.get(this._indexToOffset(index)) as PrimTypeMap[D]);
+  }
+
+  public _setByIndex(index: number, value: PrimTypeMap[D]): void {
+    this.data.set(this._indexToOffset(index), Number(value));
+  }
+
   _indexToOffset(index: number): number {
     let offset = this.offset;
     for (let i = this.shape.length - 1; i >= 0; i--) {
@@ -123,38 +137,56 @@ export class Tensor<D extends DType> {
     }
     return offset;
   }
-}
 
-// factory method to create a getByIndexMethod based on strides and dtype
-function createGetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
-  let getByIndex: (index: number) => PrimTypeMap[D];
-  if (isBroadcastedTensor(tensor)) {
-    if (tensor.dtype === "bool") {
-      getByIndex = (index: number) =>
-        !!tensor.data.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
-    } else {
-      getByIndex = (index: number) =>
-        tensor.data.get(tensor._indexToOffset(index)) as PrimTypeMap[D];
-    }
-  } else {
-    if (tensor.dtype === "bool") {
-      getByIndex = (index: number) =>
-        !!tensor.data.get(index) as PrimTypeMap[D];
-    } else {
-      getByIndex = (index: number) => tensor.data.get(index) as PrimTypeMap[D];
-    }
+  add<T extends DType>(
+    other: Tensor<T> | TensorLike | RecursiveArray
+  ): Tensor<T | D> {
+    return add(this, other) as Tensor<T | D>;
   }
-  return getByIndex;
-}
 
-function createSetByIndexMethod<D extends DType>(tensor: Tensor<D>) {
-  let setByIndex: (index: number, value: PrimTypeMap[D]) => void;
-  if (isBroadcastedTensor(tensor)) {
-    setByIndex = (index: number, value: PrimTypeMap[D]) =>
-      tensor.data.set(tensor._indexToOffset(index), Number(value));
-  } else {
-    setByIndex = (index: number, value: PrimTypeMap[D]) =>
-      tensor.data.set(index, Number(value));
+  add_<T extends DType>(
+    other: Tensor<T> | TensorLike | RecursiveArray
+  ): Tensor<D> {
+    return add_(this, other);
   }
-  return setByIndex;
+
+  mul<T extends DType>(
+    other: Tensor<T> | TensorLike | RecursiveArray
+  ): Tensor<T | D> {
+    return mul(this, other) as Tensor<T | D>;
+  }
+
+  mul_<T extends DType>(
+    other: Tensor<T> | TensorLike | RecursiveArray
+  ): Tensor<D> {
+    return mul_(this, other);
+  }
+
+  reshape(shape: number[]): Tensor<D> {
+    return reshape(this, shape);
+  }
+
+  reshape_(shape: number[]): Tensor<D> {
+    return reshape_(this, shape);
+  }
+
+  expand(shape: number[]): Tensor<D> {
+    return expand(this, shape);
+  }
+
+  slice(selection: Selection, keepDim: boolean = false): Tensor<D> {
+    return slice(this, selection, keepDim);
+  }
+
+  squeeze(dim?: number | number[]): Tensor<D> {
+    return squeeze(this, dim);
+  }
+
+  squeeze_(dim?: number | number[]): Tensor<D> {
+    return squeeze_(this, dim);
+  }
+
+  broadcastTo(shape: number[]): Tensor<D> {
+    return this.expand(shape);
+  }
 }

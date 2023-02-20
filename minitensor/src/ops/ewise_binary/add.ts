@@ -39,19 +39,14 @@ export function add<D1 extends DType, D2 extends DType>(
   return resultedTensor;
 }
 
-// TODO: In place version of add
 export function add_<D1 extends DType, D2 extends DType>(
   input: Tensor<D1>,
   other: Tensor<D2> | TensorLike | RecursiveArray
 ) {
-  // This method allows downcasting for other (this would cause confusion), e.g., casting float32 to int32, so we don't allow it
 
   let other_ = other instanceof Tensor ? other : (tensor(other) as Tensor<D2>);
   other_ = broadcastTo(other_, input.shape);
-
-  // Gate for downcasting
   const otherSameTypeAsInput = other_.type(input.dtype);
-
   const tensorsIterator = new TensorsIterator(input, otherSameTypeAsInput);
 
   if (input.dtype !== DType.bool) {
