@@ -9,12 +9,21 @@ interface ScatterPlotProps {
   height: number;
 }
 
+const removeSVGElements = (...classesOrIds: string[]) => {
+  classesOrIds.forEach((name) => {
+    d3.selectAll(name).remove();
+  });
+};
+
 const drawScatterPlot = (
   svgRef: RefObject<SVGSVGElement>,
   data: Dataset,
   width: number,
   height: number
 ) => {
+  // Clear previous plot's elements if any
+  removeSVGElements(".plot-axis", ".plot-points", "#tooltip");
+
   // Prepare data
   // Get max value of X.slice([null, 0]) and X.slice([null, 1])
   const maxX0 = d3.max(data.X.slice([null, 0]).array() as number[])!;
@@ -36,8 +45,43 @@ const drawScatterPlot = (
     .attr("width", width)
     .attr("height", height);
 
-  svg.selectAll("*").remove(); // Clear previous plot if any
-  d3.selectAll("#tooltip").remove(); // Clear previous tooltip if any
+  // Add axis labels and plot title
+  if (d3.selectAll(".axis-label").size() === 0) {
+    svg
+      .append("foreignObject")
+      .attr("class", "axis-label")
+      .attr("x", inner_width / 2 + marginAll)
+      .attr("y", inner_height + marginAll * 1.1)
+      .attr("width", 50)
+      .attr("height", 25)
+      .text("$$x_0$$")
+      .style("font-size", "14px");
+
+    svg
+      .append("foreignObject")
+      .attr("class", "axis-label")
+      .attr("width", 50)
+      .attr("height", 25)
+      .text("$$x_1$$")
+      .attr(
+        "transform",
+        `translate(${marginAll * 0.1}, ${
+          inner_height / 2 + marginAll
+        })rotate(-90)`
+      )
+      .style("font-size", "14px");
+  }
+
+  if (d3.selectAll(".plot-title").size() === 0) {
+    svg
+      .append("text")
+      .attr("class", "plot-title")
+      .attr("x", inner_width / 2 + marginAll)
+      .attr("y", marginAll)
+      .attr("text-anchor", "middle")
+      .style("font-size", "20px")
+      .text("Scatter Plot");
+  }
 
   // Plotting code
   const xScale = d3
@@ -52,7 +96,7 @@ const drawScatterPlot = (
 
   const color = d3.scaleOrdinal(d3.schemeCategory10);
   const tooltip = d3
-    .select("#scatter-plot")
+    .select("#plot-tooltip")
     .append("div")
     .attr("id", "tooltip")
     .style("position", "absolute")
@@ -64,67 +108,20 @@ const drawScatterPlot = (
     );
 
   svg
-    .append("text")
-    .attr("x", inner_width / 2 + marginAll)
-    .attr("y", marginAll)
-    .attr("text-anchor", "middle")
-    .style("font-size", "20px")
-    .text("Scatter Plot");
-
-  svg
-    .append("text")
-    .attr("x", inner_width / 2 + marginAll)
-    .attr("y", inner_height + marginAll * 1.7)
-    .attr("text-anchor", "middle")
-    .style("font-size", "14px")
-    .text("x_0");
-
-  svg
-    .append("text")
-    .text("x_1")
-    .attr("text-anchor", "middle")
-    .style("font-size", "14px")
-    .attr(
-      "transform",
-      `translate(${marginAll * 0.3}, ${
-        inner_height / 2 + marginAll
-      })rotate(-90)`
-    );
-
-  // svg
-  //   .append("foreignObject")
-  //   .attr("x", inner_width / 2 + marginAll)
-  //   .attr("y", inner_height + marginAll * 1.1)
-  //   .attr("width", 50)
-  //   .attr("height", 25)
-  //   .text("$$x_0$$")
-  //   .style("font-size", "14px");
-
-  // svg
-  //   .append("foreignObject")
-  //   .attr("width", 50)
-  //   .attr("height", 25)
-  //   .text("$$x_1$$")
-  //   .attr(
-  //     "transform",
-  //     `translate(${marginAll * 0.1}, ${
-  //       inner_height / 2 + marginAll
-  //     })rotate(-90)`
-  //   )
-  //   .style("font-size", "14px");
-
-  svg
     .append("g")
+    .attr("class", "plot-axis")
     .attr("transform", `translate(${marginAll}, ${inner_height + marginAll})`)
     .call(d3.axisBottom(xScale));
 
   svg
     .append("g")
+    .attr("class", "plot-axis")
     .attr("transform", `translate(${marginAll}, ${marginAll})`)
     .call(d3.axisLeft(yScale));
 
   svg
     .append("g")
+    .attr("class", "plot-points")
     .selectAll("dot")
     .data(featureArray)
     .enter()
@@ -150,15 +147,18 @@ const ScatterPlot: React.FC<ScatterPlotProps> = ({ data, height, width }) => {
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    console.log("**************************");
-    console.log("ScatterPlot useEffect");
     if (!svgRef.current) return;
     drawScatterPlot(svgRef, data, width, height);
   }, [data, height, width]);
 
   return (
     <>
-      <div className="outline-dashed outline-1" id="scatter-plot">
+      <Script
+        id="MathJax-script"
+        async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+      />
+      <div className="outline-dashed outline-1" id="plot-tooltip">
         <svg ref={svgRef} width={width} height={height} />
       </div>
     </>

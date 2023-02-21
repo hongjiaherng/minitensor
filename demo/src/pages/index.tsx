@@ -9,16 +9,14 @@ export type Dataset = {
 };
 
 const Home: NextPage = () => {
-  console.log("App rendering");
   const [dataset, setDataset] = useState<Dataset>();
   const [isPaused, setIsPaused] = useState<boolean>(true);
   const interval = useRef<NodeJS.Timeout | null>();
 
   useEffect(() => {
-    console.log("App useEffect");
     if (!isPaused) {
       interval.current = setInterval(
-        () => setDataset(mt.datasets.makeBlobs(1000, 2, 3, 1.0, [-10, 10])),
+        () => setDataset(mt.datasets.makeBlobs(10, 2, 3, 1.0, [-10, 10])),
         1000
       );
     } else {
@@ -36,16 +34,24 @@ const Home: NextPage = () => {
         {dataset && <ScatterPlot data={dataset} width={500} height={500} />}
         <div className="flex justify-around  p-2">
           <button
-            className="w-32 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsPaused(false)}
           >
             Generate
           </button>
           <button
-            className="w-32 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsPaused(true)}
           >
             Stop
+          </button>
+          <button
+            className="w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() =>
+              setDataset(mt.datasets.makeBlobs(10, 2, 3, 1.0, [-10, 10]))
+            }
+          >
+            Generate Once
           </button>
         </div>
       </div>
