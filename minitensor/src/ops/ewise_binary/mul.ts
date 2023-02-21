@@ -1,5 +1,5 @@
 import { Tensor } from "../../tensor";
-import { DType, TensorLike, RecursiveArray, PrimTypeMap } from "../../types";
+import { DType, RecursiveArray, TensorLike } from "../../types";
 import { upcastType } from "../../types_util";
 import { broadcastTensors, broadcastTo, TensorsIterator } from "../broadcast";
 import { empty, tensor } from "../creation";

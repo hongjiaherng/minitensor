@@ -1,6 +1,6 @@
 import { areShapesEqual } from "../../shape_strides_util";
 import { Tensor } from "../../tensor";
-import { DType, PrimTypeMap } from "../../types";
+import { DType } from "../../types";
 import { expand } from "../view";
 import { broadcastShapes } from "./broadcast_shapes";
 

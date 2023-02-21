@@ -1,16 +1,32 @@
 {
   "name": "minitensor",
   "version": "1.0.0",
-  "description": "",
-  "main": "./src/index.ts",
+  "description": "A minimal tensor library for JavaScript",
+  "main": "./build/index.js",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
+  "files": [
+    "build",
+    "src"
+  ],
   "scripts": {
     "start": "npx ts-node",
     "build": "npx tsc -p ./tsconfig.json",
     "test": "npx jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "tensor",
+    "strided array",
+    "broadcasting",
+    "autodiff",
+    "machine learning"
+  ],
+  "author": "jherng",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/hongjiaherng/minitensor.git"
+  },
   "devDependencies": {
     "@types/jest": "^29.4.0",
     "@types/node": "^18.11.18",

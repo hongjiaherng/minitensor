@@ -1,7 +1,6 @@
-import { isTypedArray } from "util/types";
 import { Tensor } from "./tensor";
 import { DType, RecursiveArray, TensorLike, TypedArrayMap } from "./types";
-import { castToTypedArray, inferDTypeFromTensorLikeObj } from "./types_util";
+import { castToTypedArray, inferDTypeFromTensorLikeObj, isTypedArray } from "./types_util";
 
 // Definition of "Storages are immutable":
 // - size, dtype cannot be mutated

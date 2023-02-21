@@ -6,7 +6,6 @@
  * - castToTypedArray
  * - isDTypeMatchedWithTypedArray
  */
-import { isTypedArray } from "util/types";
 import { DType, TensorLike, TypedArray, TypedArrayMap } from "./types";
 
 // Order of precedence of type upcasting: float64 > float32 > int32 > int16 > bool
@@ -58,6 +57,23 @@ const upcastTypeMap = {
   [DType.int32]: UpcastInt32AndMap,
   [DType.bool]: UpcastBoolAndMap
 };
+
+export function isTypedArray(object: any): object is TypedArray {
+  // include unsupported typedarray in this library too
+  return (
+    object instanceof Float64Array ||
+    object instanceof Float32Array ||
+    object instanceof Uint8ClampedArray ||
+    object instanceof Uint8Array ||
+    object instanceof Uint16Array ||
+    object instanceof Uint32Array ||
+    object instanceof BigUint64Array ||
+    object instanceof Int8Array ||
+    object instanceof Int16Array ||
+    object instanceof Int32Array ||
+    object instanceof BigInt64Array
+  );
+}
 
 export function upcastType<D1 extends DType, D2 extends DType>(
   inputType: D1,

@@ -21,7 +21,7 @@ export function makeBlobs<D extends DType.float32 | DType.float64>(
     dtype,
     randomState
   );
-  const X = randNormal([nSamples, nFeatures], dtype, randomState);
+  const X = randNormal([nSamples, nFeatures], dtype, randomState).mul_(clusterStd);
   const y = full([nSamples], 1, dtype);
 
   for (let i = 0; i < centers; i++) {

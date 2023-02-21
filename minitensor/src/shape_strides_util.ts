@@ -10,8 +10,8 @@
  */
 
 import assert from "assert";
-import { isTypedArray } from "util/types";
 import { TensorLike, RecursiveArray } from "./types";
+import { isTypedArray } from "./types_util";
 
 export function computeStrides(shape: number[]): number[] {
   const strides = new Array(shape.length);
