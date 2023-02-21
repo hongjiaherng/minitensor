@@ -1,36 +1,55 @@
-import type { InferGetStaticPropsType } from "next";
-import { useState } from "react";
-import * as minitensor from "minitensor";
+import type { GetStaticProps, InferGetStaticPropsType, NextPage } from "next";
+import ScatterPlot from "../components/ScatterPlot";
+import * as mt from "minitensor";
+import { useEffect, useRef, useState } from "react";
 
-export const getStaticProps = async () => {
-  const typedArray = Float32Array.from([1, 2, 3, 4]);
-  console.log("typedArray", typedArray);
-  const data = {
-    typedArray: Array.from(typedArray),
-    minitensor: minitensor.float32
-  };
-  console.log("data", data);
-  return {
-    props: {
-      data
-    }
-  };
+export type Dataset = {
+  X: mt.Tensor<mt.DType.float32 | mt.DType.float64>;
+  y: mt.Tensor<mt.DType.float32 | mt.DType.float64>;
 };
 
-const Home = ({ data }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const [typedArray] = useState(Float32Array.from([1, 2, 3, 4]));
-  const [tensor] = useState(minitensor.tensor([1, 2, 3, 4]));
+const Home: NextPage = () => {
+  console.log("App rendering");
+  const [dataset, setDataset] = useState<Dataset>();
+  const [isPaused, setIsPaused] = useState<boolean>(true);
+  const interval = useRef<NodeJS.Timeout | null>();
+
+  useEffect(() => {
+    console.log("App useEffect");
+    if (!isPaused) {
+      interval.current = setInterval(
+        () => setDataset(mt.datasets.makeBlobs(1000, 2, 3, 1.0, [-10, 10])),
+        1000
+      );
+    } else {
+      clearInterval(interval.current!);
+      interval.current = null;
+    }
+
+    return () => clearInterval(interval.current!);
+  }, [isPaused]);
+
   return (
-    <>
-      <div>{JSON.stringify(data)}</div>
-      <div>{JSON.stringify(typedArray)}</div>
-      <div>{minitensor.float32}</div>
-      <div>{JSON.stringify(tensor)}</div>
-      <div>{JSON.stringify(minitensor.computeStrides([3, 3]))}</div>
-      <div>{JSON.stringify(tensor.expand([4, 4]))}</div>
-      {/* <div>{JSON.stringify(minitensor.datasets.makeBlobs(10, 2, 3))}</div> */}
-      {/* <div>{minitensor.div}</div> */}
-    </>
+    <div className="flex items-center justify-center h-screen">
+      <div className="flex-col">
+        <div className="text-center text-4xl font-bold p-2">minitensor</div>
+        {dataset && <ScatterPlot data={dataset} width={500} height={500} />}
+        <div className="flex justify-around  p-2">
+          <button
+            className="w-32 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setIsPaused(false)}
+          >
+            Generate
+          </button>
+          <button
+            className="w-32 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            onClick={() => setIsPaused(true)}
+          >
+            Stop
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
