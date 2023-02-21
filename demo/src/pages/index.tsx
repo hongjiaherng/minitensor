@@ -16,7 +16,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!isPaused) {
       interval.current = setInterval(
-        () => setDataset(mt.datasets.makeBlobs(10, 2, 3, 1.0, [-10, 10])),
+        () => setDataset(mt.datasets.makeBlobs(100, 2, 3, 1.0, [-10, 10])),
         1000
       );
     } else {
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
       <div className="flex-col">
         <div className="text-center text-4xl font-bold p-2">minitensor</div>
         {dataset && <ScatterPlot data={dataset} width={500} height={500} />}
-        <div className="flex justify-around  p-2">
+        <div className="flex justify-center p-2 space-x-2">
           <button
             className="w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             onClick={() => setIsPaused(false)}
