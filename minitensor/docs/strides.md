@@ -56,6 +56,7 @@ def computeStrides(shape):
   - https://github.com/cezannec/capsule_net_pytorch/issues/4
   - https://stackoverflow.com/questions/49643225/whats-the-difference-between-reshape-and-view-in-pytorch
   - https://stackoverflow.com/questions/66750391/runtimeerror-view-size-is-not-compatible-with-input-tensors-size-and-stride-a
+  - https://numpy.org/doc/stable/glossary.html#term-contiguous
 - TODO:
   - implement `view`, fix `reshape`, research way to check contiguousness of a
     data (the unable to create view error mostly happens when trying to create a
