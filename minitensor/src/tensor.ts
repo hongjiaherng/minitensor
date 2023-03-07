@@ -10,6 +10,7 @@ import {
   squeeze_
 } from "./ops/view";
 import { Selection } from "./ops/view/slice";
+import { view } from "./ops/view/view";
 import { Storage } from "./storage";
 import { DType, PrimTypeMap, RecursiveArray, TensorLike } from "./types";
 
@@ -168,6 +169,10 @@ export class Tensor<D extends DType> {
 
   reshape_(shape: number[]): Tensor<D> {
     return reshape_(this, shape);
+  }
+
+  view(shape: number[]): Tensor<D> {
+    return view(this, shape);
   }
 
   expand(shape: number[]): Tensor<D> {

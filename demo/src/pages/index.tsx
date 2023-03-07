@@ -8,6 +8,10 @@ export type Dataset = {
   y: mt.Tensor<mt.DType.float32 | mt.DType.float64>;
 };
 
+const generateDataset = (): Dataset => {
+  return mt.datasets.makeBlobs(1000, 2, 3, 1.0, [-10, 10]);
+};
+
 const Home: NextPage = () => {
   const [dataset, setDataset] = useState<Dataset>();
   const [isPaused, setIsPaused] = useState<boolean>(true);
@@ -15,10 +19,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     if (!isPaused) {
-      interval.current = setInterval(
-        () => setDataset(mt.datasets.makeBlobs(100, 2, 3, 1.0, [-10, 10])),
-        1000
-      );
+      interval.current = setInterval(() => setDataset(generateDataset()), 1000);
     } else {
       clearInterval(interval.current!);
       interval.current = null;
@@ -47,9 +48,7 @@ const Home: NextPage = () => {
           </button>
           <button
             className="w-40 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            onClick={() =>
-              setDataset(mt.datasets.makeBlobs(10, 2, 3, 1.0, [-10, 10]))
-            }
+            onClick={() => setDataset(generateDataset())}
           >
             Generate Once
           </button>

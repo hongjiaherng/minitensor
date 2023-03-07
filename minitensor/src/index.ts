@@ -1,5 +1,5 @@
 export { Tensor } from "./tensor";
-export { Storage, sharesMemory } from "./storage";
+export { Storage } from "./storage";
 
 export {
   arange,
@@ -34,6 +34,7 @@ export {
 } from "./ops/broadcast";
 
 export { computeExpandedStrides, computeStrides } from "./shape_strides_util";
+export { sharesMemory, isContiguous } from "./tensor_util";
 
 import { DType } from "./types";
 const float32 = DType.float32;

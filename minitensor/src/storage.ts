@@ -50,10 +50,3 @@ export function flattenArray(
   }
   return flatArray;
 }
-
-export function sharesMemory<D extends DType>(
-  x: Tensor<D>,
-  y: Tensor<D>
-): boolean {
-  return x.data === y.data;
-}
